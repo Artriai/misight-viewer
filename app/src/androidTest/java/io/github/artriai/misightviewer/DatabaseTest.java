@@ -106,4 +106,17 @@ public class DatabaseTest {
             assertEquals(3,db.query(filter,0).total);
         }finally{SnapshotImporter.remove(f);}
     }
+    @Test public void optionalLocalSnapshotRemainsPrivateAndQueryable() throws Exception {
+        String path=InstrumentationRegistry.getArguments().getString("localSnapshot");
+        if(path==null)return; // A developer may supply a device-private snapshot; never part of CI.
+        File f=new File(path);byte[] before=digest(f);
+        try(MisightDatabase db=new MisightDatabase(f)) {
+            long expected=Long.parseLong(InstrumentationRegistry.getArguments().getString("expectedRows","0"));
+            assertTrue(db.stats().total>0);if(expected>0)assertEquals(expected,db.stats().total);
+            MisightDatabase.Filter filter=new MisightDatabase.Filter();filter.eventId=907400027L;
+            MisightDatabase.Page p=db.query(filter,0);assertTrue(p.total>0);
+            for(MisightDatabase.Event event:p.events)assertEquals(907400027L,event.eventId);
+        }
+        assertArrayEquals(before,digest(f));
+    }
 }
