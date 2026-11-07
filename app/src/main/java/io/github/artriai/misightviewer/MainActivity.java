@@ -35,13 +35,16 @@ public final class MainActivity extends Activity {
     private static final int CHIP_COUNT = 6;
 
     public static final Set<Long> PRIVACY_IDS = new HashSet<>(Arrays.asList(
-        915100017L, // 驻留省市与网络场景
-        915200006L, 915200010L, 915200011L, 915200012L, 915200013L, 915200015L, // 通话记录、呼叫、基站
-        923525000L, // 相册/媒体文件访问与删除
-        917020102L, 917020105L, 917020301L, 917020701L, 917020703L, 917042101L, 917043001L, // 蓝牙外设与MAC
-        919011101L, 919011102L, 919012101L, 919022002L, 919032001L, // 定位诊断与权限
-        907404002L, // 应用间唤醒
-        923044101L  // 屏幕解锁耗时与方式
+        907400027L, // 应用前后台切换（精准监控使用哪些应用）
+        915100017L, // 驻留省市与网络场景（省份、地级市、停留时长、电梯/高铁场景）
+        915200006L, 915200010L, 915200011L, 915200012L, 915200013L, 915200015L, // 通话记录、呼入呼出、通话时长、挂断原因、通话基站Cell ID
+        916101001L, // VPN网络代理状态
+        923525000L, // 相册与媒体操作（照片路径、截屏、删除回收站）
+        917020102L, 917020105L, 917020301L, 917020701L, 917020703L, // 蓝牙外设名称与物理MAC地址
+        919011101L, 919011102L, 919012101L, 919022002L, 919032001L, // 定位诊断、网络定位数据源、卫星定位搜星
+        923044101L, // 屏幕解锁方式与鉴权耗时
+        920012019L, 920012061L, 920012082L, // 相机调用监控
+        906007061L  // 麦克风录音与音频通道监控
     ));
     public static boolean isPrivacy(long id) {
         return PRIVACY_IDS.contains(id) || (id >= 915200000L && id <= 915299999L);
@@ -221,24 +224,28 @@ public final class MainActivity extends Activity {
                     source.setText(description + "\n" + EventCatalog.time(stats.first, opened.milliseconds) + " — " + EventCatalog.time(stats.last, opened.milliseconds));
 
                     long privacyTotal = 0;
-                    long locCount = 0, callCount = 0, mediaCount = 0, unlockCount = 0;
+                    long appSwitchCount = 0, locCount = 0, callCount = 0, mediaCount = 0, unlockCount = 0, vpnCount = 0;
                     for (MisightDatabase.TypeCount t : stats.types) {
                         if (isPrivacy(t.eventId)) privacyTotal += t.count;
-                        if (t.eventId == 915100017L) locCount += t.count;
+                        if (t.eventId == 907400027L) appSwitchCount += t.count;
+                        else if (t.eventId == 915100017L) locCount += t.count;
                         else if (t.eventId >= 915200000L && t.eventId <= 915299999L) callCount += t.count;
                         else if (t.eventId == 923525000L) mediaCount += t.count;
                         else if (t.eventId == 923044101L) unlockCount += t.count;
+                        else if (t.eventId == 916101001L) vpnCount += t.count;
                     }
                     privacyTotalCount = privacyTotal;
 
                     if (privacyTotal > 0) {
                         StringBuilder sb = new StringBuilder();
-                        sb.append(String.format(Locale.CHINA, "⚠️ 检出敏感隐私 %,d 条：", privacyTotal));
+                        sb.append(String.format(Locale.CHINA, "⚠️ 检出高敏感隐私 %,d 条：", privacyTotal));
                         List<String> parts = new ArrayList<>();
+                        if (appSwitchCount > 0) parts.add("📱 应用切换 " + String.format(Locale.CHINA, "%,d", appSwitchCount));
                         if (locCount > 0) parts.add("📍 省市位置 " + String.format(Locale.CHINA, "%,d", locCount));
-                        if (callCount > 0) parts.add("📞 通话 " + String.format(Locale.CHINA, "%,d", callCount));
+                        if (callCount > 0) parts.add("📞 通话与基站 " + String.format(Locale.CHINA, "%,d", callCount));
                         if (mediaCount > 0) parts.add("🖼️ 相册 " + String.format(Locale.CHINA, "%,d", mediaCount));
                         if (unlockCount > 0) parts.add("🔓 解锁 " + String.format(Locale.CHINA, "%,d", unlockCount));
+                        if (vpnCount > 0) parts.add("🛡️ VPN " + String.format(Locale.CHINA, "%,d", vpnCount));
                         for (int i = 0; i < parts.size(); i++) {
                             if (i > 0) sb.append("  ·  ");
                             sb.append(parts.get(i));
@@ -448,8 +455,8 @@ public final class MainActivity extends Activity {
                         .putExtra(Intent.EXTRA_TITLE, "misight-records.json"), EXPORT);
             } else if (which == 1) loadSnapshot(() -> DemoDatabase.create(this), "人工演示数据 · 非真实记录");
             else if (which == 3) clearSnapshot();
-            else new AlertDialog.Builder(this).setTitle("MiSight 查看器 0.2.1").setMessage(
-                    "支持 MiSight event_info 数据库，中文标签是辅助解释。\n\n列表按日期分组，把应用包名换成应用名，突出展示驻留省市（带地级市）、通话时长与基站、相册图片路径、解锁等敏感记录；原始字段始终可在详情里查看与复制，复制不打码。\n\n敏感字段打码默认关闭以完整展示敏感信息，可在“更多”中开启。\n\n导入已导出的 SQLite 快照无需 root。活跃数据库应导出一致性副本，单独复制主文件可能漏掉 WAL 中的记录。\n\n读取本机需要授权本应用 root：主库 /data/miuilog/misight/event.db；备份库 /mnt/rescue/misight/event.db。\n\n应用只读取快照，不修改系统数据库。没有互联网权限，不内置统计 SDK。导出的是全部匹配行，param_list 保留原始 JSON 字符串，并附带事件名称。\n\n本地记录不能单独证明存在上传。时间统一显示为北京时间。"
+            else new AlertDialog.Builder(this).setTitle("MiSight 查看器 0.2.2").setMessage(
+                    "支持 MiSight event_info 数据库，中文标签是辅助解释。\n\n列表按日期分组，突出展示被监控感极强的高敏感记录：\n· 📱 应用前后台切换（每分每秒使用应用的切换轨迹）\n· 📍 驻留省市与网络场景（详细地级市、停留时长、电梯/高铁模式）\n· 📞 通话记录与通话基站小区（Cell ID 精准基站塔、通话时长）\n· 🛡️ VPN 代理使用状态\n· 🖼️ 相册图片/视频绝对路径与删除记录\n· 🔓 屏幕解锁方式与鉴权耗时\n· 📷 相机/麦克风调用记录\n\n详情页“复制原始字段”与“查看原始字段”均完整展示未打码原始 JSON。\n\n内置固定签名证书，云端构建固定统一密钥签名。\n\n导入已导出的 SQLite 快照无需 root。读取本机需要授权 root。\n\n应用只读取快照，不修改系统数据库。没有互联网权限，不内置统计 SDK。"
             ).setPositiveButton("知道了", null).show();
         }).show();
     }

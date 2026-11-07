@@ -163,7 +163,7 @@ public final class EventPresenter {
     /** First few readable "label：value" facts for list rows, prioritizing key privacy and diagnostic items. */
     public String facts(Card card, int max) {
         StringBuilder sb = new StringBuilder(); int n = 0;
-        String[] priorityKeys = {"c", "p", "call_duration", "CallDirect", "call_cell_id", "ueSpecialScene", "fivegOptimizeScene", "path", "DeviceName", "DeviceMac", "unlockType"};
+        String[] priorityKeys = {"c", "p", "isVpn", "call_duration", "CallDirect", "call_cell_id", "call_pci", "ueSpecialScene", "fivegOptimizeScene", "path", "DeviceName", "DeviceMac", "unlockType"};
         for (String pk : priorityKeys) {
             if (n >= max) break;
             for (Field f : card.fields) {
@@ -208,6 +208,10 @@ public final class EventPresenter {
         } else if (id == 907404002L) {
             String caller = o.optString("callerPkgName", ""), callee = o.optString("calleePkgName", "");
             if (!caller.isEmpty() && !callee.isEmpty()) return apps.display(caller) + " 唤醒 " + apps.display(callee);
+        } else if (id == 916101001L) {
+            int vpn = o.optInt("isVpn", 0);
+            boolean isVpn = vpn == 1 || "true".equalsIgnoreCase(o.optString("isVpn", ""));
+            return isVpn ? "🛡️ VPN 代理状态 · 正在连接运行" : "🛡️ VPN 代理状态 · 未开启/已断开";
         } else if (id == 915100017L) {
             String p = o.optString("p", ""), c = o.optString("c", "");
             String pZh = translateProvince(p), cZh = translateCity(c);
@@ -237,6 +241,13 @@ public final class EventPresenter {
                 }
             }
             return sb.toString();
+        } else if (id == 915200015L) {
+            String cell = o.optString("call_cell_id", "");
+            String pci = o.optString("call_pci", "");
+            StringBuilder sb = new StringBuilder("🗼 通话基站定位");
+            if (!cell.isEmpty()) sb.append(" · Cell ID: ").append(cell);
+            if (!pci.isEmpty()) sb.append(" (PCI ").append(pci).append(")");
+            return sb.toString();
         } else if (id == 915200012L) {
             long dur = o.optLong("call_duration", -1);
             String begin = o.optString("call_begin_time", "");
@@ -257,9 +268,6 @@ public final class EventPresenter {
             String msg = o.optString("DiconnectMessage", "");
             String title = "MT".equalsIgnoreCase(dir) ? "📵 呼入通话挂断" : ("MO".equalsIgnoreCase(dir) ? "📵 呼出通话挂断" : "📵 通话结束挂断");
             return msg.isEmpty() ? title : title + " · " + msg;
-        } else if (id == 915200015L) {
-            String cell = o.optString("call_cell_id", "");
-            return cell.isEmpty() ? "🗼 通话基站记录" : "🗼 通话基站 · Cell ID " + cell;
         } else if (id == 923525000L) {
             int op = o.optInt("operationType", 0);
             String prefix = op == 40 ? "🗑️ 相册删除/回收站：" : (op == 30 ? "🖼️ 相册访问照片：" : "🖼️ 相册媒体操作：");
@@ -270,6 +278,16 @@ public final class EventPresenter {
                 return prefix + (slash >= 0 ? p.substring(slash + 1) : p);
             }
             return op == 40 ? "🗑️ 相册删除照片" : "🖼️ 相册访问照片";
+        } else if (id == 920012019L || id == 920012061L || id == 920012082L) {
+            String app = o.optString("AppName", "");
+            if (app.isEmpty()) app = o.optString("PackageName", "");
+            int cam = o.optInt("CameraId", -1);
+            String camStr = cam == 1 ? "前置自拍" : (cam == 0 ? "后置主摄" : "摄像头");
+            return "📷 相机调用监控 · " + (app.isEmpty() ? camStr : apps.display(app) + " (" + camStr + ")");
+        } else if (id == 906007061L) {
+            String pkg = o.optString("packageName", "");
+            int rate = o.optInt("sampleRate", 0);
+            return "🎙️ 麦克风音频录音 · " + (pkg.isEmpty() ? "系统音频" : apps.display(pkg)) + (rate > 0 ? " (" + rate + "Hz)" : "");
         } else if (id == 917020105L || id == 917020701L) {
             String dev = o.optString("DeviceName", "");
             String mac = o.optString("DeviceMac", "");
@@ -358,6 +376,10 @@ public final class EventPresenter {
         String text = plain(v);
         if (text.isEmpty()) return "";
 
+        if ("isVpn".equalsIgnoreCase(key)) {
+            if (text.equals("1") || text.equalsIgnoreCase("true")) return "开启中（正在使用网络代理/VPN）";
+            if (text.equals("0") || text.equalsIgnoreCase("false")) return "未开启";
+        }
         if ("c".equalsIgnoreCase(key)) {
             String zh = translateCity(text);
             return zh.equals(text) ? text : zh + "（" + text + "）";
@@ -380,6 +402,10 @@ public final class EventPresenter {
         if ("operationType".equalsIgnoreCase(key)) {
             if ("30".equals(text)) return "查看 / 读取（30）";
             if ("40".equals(text)) return "移入回收站 / 删除（40）";
+        }
+        if ("CameraId".equalsIgnoreCase(key)) {
+            if ("1".equals(text)) return "前置自拍摄像头（1）";
+            if ("0".equals(text)) return "后置主摄像头（0）";
         }
 
         Long number = v instanceof Number ? Long.valueOf(((Number) v).longValue()) : parseLong(text);
