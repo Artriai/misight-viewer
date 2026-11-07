@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Only used locally to show app names instead of package names; the app has no INTERNET permission. -->
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"/>
     <application android:label="MiSight 查看器" android:icon="@drawable/ic_launcher"
         android:theme="@style/AppTheme" android:allowBackup="false"
         android:supportsRtl="true">

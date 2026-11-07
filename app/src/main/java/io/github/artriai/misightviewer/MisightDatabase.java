@@ -23,9 +23,17 @@ public final class MisightDatabase implements Closeable {
     public static final class Filter {
         public String search = "";
         public Long eventId;
+        /** Restricts to a group of event ids (e.g. every id that shares one readable title). */
+        public List<Long> eventIds;
+        /** Extra matches for the search box: events whose title matched, and apps whose name matched. */
+        public List<Long> searchEventIds;
+        public List<String> searchPackages;
         public Long fromMillis, untilMillis;
         public Filter copy() {
             Filter f = new Filter(); f.search = search; f.eventId = eventId;
+            f.eventIds = eventIds == null ? null : new ArrayList<>(eventIds);
+            f.searchEventIds = searchEventIds == null ? null : new ArrayList<>(searchEventIds);
+            f.searchPackages = searchPackages == null ? null : new ArrayList<>(searchPackages);
             f.fromMillis = fromMillis; f.untilMillis = untilMillis; return f;
         }
     }
@@ -104,11 +112,23 @@ public final class MisightDatabase implements Closeable {
             sql.append(" AND first_time<?");
             args.add(Long.toString(milliseconds ? f.untilMillis : Math.floorDiv(f.untilMillis, 1000)));
         }
+        if (f.eventIds != null && !f.eventIds.isEmpty()) sql.append(" AND event_id IN (").append(idList(f.eventIds)).append(")");
         if (f.search != null && !f.search.trim().isEmpty()) {
-            sql.append(" AND (instr(lower(COALESCE(param_list,'')),lower(?))>0 OR CAST(event_id AS TEXT)=?)");
+            sql.append(" AND (instr(lower(COALESCE(param_list,'')),lower(?))>0 OR CAST(event_id AS TEXT)=?");
             args.add(f.search.trim()); args.add(f.search.trim());
+            if (f.searchEventIds != null && !f.searchEventIds.isEmpty()) sql.append(" OR event_id IN (").append(idList(f.searchEventIds)).append(")");
+            if (f.searchPackages != null) for (String pkg : f.searchPackages) {
+                sql.append(" OR instr(lower(COALESCE(param_list,'')),lower(?))>0"); args.add(pkg);
+            }
+            sql.append(")");
         }
         return new Where(sql.toString(), args);
+    }
+    /** Event ids are numeric, so they are inlined: avoids SQLite's bound-variable limit for large groups. */
+    private static String idList(List<Long> ids) {
+        StringBuilder sb = new StringBuilder();
+        for (Long id : ids) { if (sb.length() > 0) sb.append(','); sb.append(id.longValue()); }
+        return sb.toString();
     }
     private String columns() {
         return "SELECT id,event_id,first_time,param_list," + (hasOccurrences ? "COALESCE(occured_cnt,1)" : "1") + " FROM event_info";
@@ -132,7 +152,9 @@ public final class MisightDatabase implements Closeable {
         return p;
     }
     /** Streams every matching row; export is independent of the visible page. */
-    public long export(Filter filter, Writer output) throws IOException {
+    public long export(Filter filter, Writer output) throws IOException { return export(filter, output, null); }
+    /** Same as above; when a catalog is given each record also carries a readable {@code event_title}. */
+    public long export(Filter filter, Writer output, EventCatalog catalog) throws IOException {
         Where w = where(filter); long count = 0;
         try (JsonWriter writer = new JsonWriter(output);
              Cursor c = db.rawQuery(columns() + w.sql + " ORDER BY first_time DESC,id DESC", w.args.toArray(new String[0]))) {
@@ -143,6 +165,7 @@ public final class MisightDatabase implements Closeable {
             while (c.moveToNext()) {
                 Event e = event(c);
                 writer.beginObject(); writer.name("id").value(e.id); writer.name("event_id").value(e.eventId);
+                if (catalog != null) writer.name("event_title").value(catalog.title(e.eventId));
                 writer.name("first_time").value(e.time); writer.name("time").value(EventCatalog.time(e.time, milliseconds));
                 writer.name("occured_cnt").value(e.occurrences); writer.name("param_list").value(e.raw);
                 writer.endObject(); count++;

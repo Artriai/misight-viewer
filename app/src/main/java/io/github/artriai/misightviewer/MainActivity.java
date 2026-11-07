@@ -32,29 +32,45 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public final class MainActivity extends Activity {
     private static final int IMPORT = 10, EXPORT = 11;
+    private static final int CHIP_COUNT = 6;
     private final ExecutorService worker = Executors.newSingleThreadExecutor();
     private final Handler main = new Handler(Looper.getMainLooper());
     private final AtomicLong generation = new AtomicLong();
     private final MisightDatabase.Filter filter = new MisightDatabase.Filter();
     private final List<MisightDatabase.Event> rows = new ArrayList<>();
+    /** What the list actually shows: day headers (String) interleaved with events. */
+    private final List<Object> items = new ArrayList<>();
+    private final List<Group> groups = new ArrayList<>();
     private volatile MisightDatabase database;
     private MisightDatabase.Stats stats;
     private EventCatalog catalog;
+    private AppNames apps;
+    private EventPresenter presenter;
     private EventAdapter adapter;
-    private TextView overview, source, status, pageText, empty;
+    private TextView overview, highlights, source, status, pageText, empty;
     private EditText search;
     private Button readButton, importButton, typeButton, dateButton, prev, next;
+    private HorizontalScrollView chipScroll;
+    private LinearLayout chipRow;
     private ProgressBar progress;
     private int page;
-    private boolean busy, destroyed;
+    private boolean busy, destroyed, millis, mask = true;
+    private Group activeGroup;
     private int bg, surface, ink, muted, accent, border;
     private String dateLabel = "日期";
     private MisightDatabase.Filter exportFilter;
     private final Runnable delayedSearch = () -> reload(0);
 
+    /** Every event id that shares one readable title, shown to people as a single kind of event. */
+    private static final class Group {
+        final String title; final List<Long> ids = new ArrayList<>(); long count;
+        Group(String title) { this.title = title; }
+    }
+
     @Override public void onCreate(Bundle state) {
         super.onCreate(state);
-        catalog = new EventCatalog(this);
+        catalog = new EventCatalog(this); apps = new AppNames(this); presenter = new EventPresenter(catalog, apps);
+        mask = getPreferences(MODE_PRIVATE).getBoolean("mask", true);
         buildUi();
         String name = getPreferences(MODE_PRIVATE).getString("snapshot", "");
         if (!name.isEmpty() && name.matches("snapshot-[a-zA-Z0-9-]+\\.db")) {
@@ -113,9 +129,11 @@ public final class MainActivity extends Activity {
         card.setPadding(dp(14), dp(12), dp(14), dp(12)); card.setBackground(rounded(surface, 16));
         overview = text("打开数据库，看看系统记下了什么", 17, ink); overview.setTypeface(null, Typeface.BOLD);
         source = text("可导入已导出的 event.db，也可读取本机主库或备份库。", 12, muted);
-        source.setPadding(0, dp(6), 0, 0); card.addView(overview); card.addView(source); root.addView(card); addGap(root, 10);
+        source.setPadding(0, dp(6), 0, 0);
+        highlights = text("", 12, accent); highlights.setPadding(0, dp(4), 0, 0); highlights.setVisibility(View.GONE);
+        card.addView(overview); card.addView(source); card.addView(highlights); root.addView(card); addGap(root, 10);
         search = new EditText(this); search.setSingleLine(true); search.setTextSize(14); search.setTextColor(ink);
-        search.setHintTextColor(muted); search.setHint("搜索包名、字段内容或事件 ID");
+        search.setHintTextColor(muted); search.setHint("搜索应用名、事件名称或字段内容");
         search.setPadding(dp(13), dp(8), dp(13), dp(8)); search.setBackground(rounded(surface, 13));
         root.addView(search, new LinearLayout.LayoutParams(-1, dp(46)));
         search.addTextChangedListener(new TextWatcher() {
@@ -126,20 +144,23 @@ public final class MainActivity extends Activity {
             public void afterTextChanged(Editable s) { }
         });
         addGap(root, 8);
+        chipScroll = new HorizontalScrollView(this); chipScroll.setHorizontalScrollBarEnabled(false); chipScroll.setVisibility(View.GONE);
+        chipRow = new LinearLayout(this); chipScroll.addView(chipRow); root.addView(chipScroll); addGap(root, 8);
         LinearLayout filters = new LinearLayout(this);
         typeButton = button("全部类型"); dateButton = button("日期"); Button reset = button("重置");
         horizontalButton(filters, typeButton, 1.7f); horizontalButton(filters, dateButton, 1); horizontalButton(filters, reset, .8f);
         typeButton.setOnClickListener(v -> chooseType()); dateButton.setOnClickListener(v -> chooseDate());
         reset.setOnClickListener(v -> {
-            filter.eventId = null; filter.fromMillis = null; filter.untilMillis = null; dateLabel = "日期";
-            typeButton.setText("全部类型"); dateButton.setText(dateLabel); search.setText(""); reload(0);
+            filter.eventId = null; filter.eventIds = null; activeGroup = null; filter.fromMillis = null; filter.untilMillis = null; dateLabel = "日期";
+            typeButton.setText("全部类型"); dateButton.setText(dateLabel); rebuildChips(); search.setText(""); reload(0);
         }); root.addView(filters);
         progress = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
         progress.setIndeterminate(true); progress.setVisibility(View.INVISIBLE); root.addView(progress, new LinearLayout.LayoutParams(-1, dp(3)));
         status = text("尚未读取数据库", 12, muted); status.setPadding(0, dp(6), 0, dp(6)); root.addView(status);
         FrameLayout listArea = new FrameLayout(this);
         ListView list = new ListView(this); list.setDividerHeight(0); list.setCacheColorHint(Color.TRANSPARENT);
-        adapter = new EventAdapter(); list.setAdapter(adapter); list.setOnItemClickListener((p, v, pos, id) -> detail(rows.get(pos)));
+        adapter = new EventAdapter(); list.setAdapter(adapter);
+        list.setOnItemClickListener((p, v, pos, id) -> { Object item = items.get(pos); if (item instanceof MisightDatabase.Event) detail((MisightDatabase.Event) item); });
         listArea.addView(list, new FrameLayout.LayoutParams(-1, -1));
         empty = text("数据只保存在本机\n点击“更多 → 演示数据”可先体验", 15, muted); empty.setGravity(Gravity.CENTER);
         listArea.addView(empty, new FrameLayout.LayoutParams(-1, -1)); list.setEmptyView(empty);
@@ -176,13 +197,70 @@ public final class MainActivity extends Activity {
                 getPreferences(MODE_PRIVATE).edit().putString("snapshot", file.getName()).apply();
                 if (previous != null && !previous.equals(file)) SnapshotImporter.remove(previous);
                 ui(() -> {
-                    stats = loaded; filter.eventId = null; typeButton.setText("全部类型");
-                    overview.setText(String.format(Locale.CHINA, "%,d 条记录  ·  %d 种事件", stats.total, stats.types.size()));
+                    stats = loaded; millis = opened.milliseconds;
+                    filter.eventId = null; filter.eventIds = null; activeGroup = null; typeButton.setText("全部类型");
+                    buildGroups();
+                    overview.setText(String.format(Locale.CHINA, "%,d 条系统记录  ·  %d 类事件", stats.total, groups.size()));
                     source.setText(description + "\n" + EventCatalog.time(stats.first, opened.milliseconds) + " — " + EventCatalog.time(stats.last, opened.milliseconds));
+                    StringBuilder top = new StringBuilder();
+                    for (int i = 0; i < groups.size() && i < 3; i++) {
+                        if (i > 0) top.append("  ·  ");
+                        top.append(groups.get(i).title).append(' ').append(String.format(Locale.CHINA, "%,d", groups.get(i).count));
+                    }
+                    highlights.setText(top.length() == 0 ? "" : "最常见：" + top); highlights.setVisibility(top.length() == 0 ? View.GONE : View.VISIBLE);
+                    rebuildChips();
                     busy(false, ""); reload(0);
                 });
             } catch (Exception e) { ui(() -> { busy(false, database == null ? "尚未读取数据库" : "保留上次快照"); error(e); }); }
         });
+    }
+    private void buildGroups() {
+        groups.clear();
+        Map<String, Group> byTitle = new LinkedHashMap<>();
+        for (MisightDatabase.TypeCount t : stats.types) {
+            String title = catalog.known(t.eventId) ? catalog.title(t.eventId) : "其他事件";
+            Group g = byTitle.get(title);
+            if (g == null) { g = new Group(title); byTitle.put(title, g); }
+            g.ids.add(t.eventId); g.count += t.count;
+        }
+        groups.addAll(byTitle.values());
+        Collections.sort(groups, (a, b) -> Long.compare(b.count, a.count));
+    }
+    private void rebuildChips() {
+        chipRow.removeAllViews();
+        if (groups.isEmpty()) { chipScroll.setVisibility(View.GONE); return; }
+        chipScroll.setVisibility(View.VISIBLE);
+        addChip("全部", activeGroup == null, v -> selectGroup(null));
+        List<Group> shown = new ArrayList<>(groups.subList(0, Math.min(CHIP_COUNT, groups.size())));
+        if (activeGroup != null && !shown.contains(activeGroup)) shown.add(0, activeGroup);
+        for (Group g : shown) addChip(g.title, g == activeGroup, v -> selectGroup(g));
+        if (groups.size() > CHIP_COUNT) addChip("更多…", false, v -> chooseType());
+    }
+    private void addChip(String label, boolean selected, View.OnClickListener click) {
+        TextView chip = text(label, 13, selected ? bg : ink);
+        chip.setPadding(dp(13), dp(7), dp(13), dp(7)); chip.setBackground(rounded(selected ? accent : surface, 17));
+        chip.setOnClickListener(click);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(-2, -2); lp.setMargins(0, 0, dp(6), 0);
+        chipRow.addView(chip, lp);
+    }
+    private void selectGroup(Group group) {
+        if (busy) return;
+        activeGroup = group; filter.eventId = null; filter.eventIds = group == null ? null : new ArrayList<>(group.ids);
+        typeButton.setText(group == null ? "全部类型" : group.title);
+        rebuildChips(); reload(0);
+    }
+    /** Search also matches event names and app names, not just the raw text. Runs on the worker thread. */
+    private void expandSearch(MisightDatabase.Filter f) {
+        if (f.search == null || f.search.trim().isEmpty()) { f.searchEventIds = null; f.searchPackages = null; return; }
+        f.searchEventIds = catalog.idsMatching(f.search); f.searchPackages = apps.packagesMatching(f.search);
+    }
+    private void rebuildItems() {
+        items.clear(); String last = null; long now = System.currentTimeMillis();
+        for (MisightDatabase.Event e : rows) {
+            String key = EventCatalog.dayKey(e.time, millis);
+            if (!key.equals(last)) { items.add(EventCatalog.dayHeader(e.time, millis, now)); last = key; }
+            items.add(e);
+        }
     }
     private void reload(int requestedPage) {
         if (database == null || busy) return;
@@ -190,10 +268,11 @@ public final class MainActivity extends Activity {
         progress.setVisibility(View.VISIBLE); status.setText("正在筛选…");
         worker.execute(() -> {
             try {
+                expandSearch(selected);
                 MisightDatabase.Page loaded = database.query(selected, requestedPage);
                 ui(() -> {
                     if (token != generation.get()) return;
-                    rows.clear(); rows.addAll(loaded.events); page = loaded.index; adapter.notifyDataSetChanged();
+                    rows.clear(); rows.addAll(loaded.events); page = loaded.index; rebuildItems(); adapter.notifyDataSetChanged();
                     progress.setVisibility(View.INVISIBLE);
                     status.setText(String.format(Locale.CHINA, "匹配 %,d 条 · 每页 %d 条", loaded.total, MisightDatabase.PAGE_SIZE));
                     empty.setText("没有匹配记录\n试试重置筛选条件");
@@ -205,17 +284,15 @@ public final class MainActivity extends Activity {
     }
     private void chooseType() {
         if (stats == null || busy) return;
-        String[] options = new String[stats.types.size()+1]; options[0] = "全部事件类型";
+        String[] options = new String[groups.size()+1]; options[0] = "全部事件类型";
         int selected = 0;
-        for (int i=0;i<stats.types.size();i++) {
-            MisightDatabase.TypeCount t = stats.types.get(i);
-            options[i+1] = catalog.title(t.eventId) + " · " + t.eventId + "  (" + t.count + ")";
-            if (Objects.equals(filter.eventId, t.eventId)) selected = i+1;
+        for (int i=0;i<groups.size();i++) {
+            Group g = groups.get(i);
+            options[i+1] = g.title + "  (" + String.format(Locale.CHINA, "%,d", g.count) + ")";
+            if (g == activeGroup) selected = i+1;
         }
         new AlertDialog.Builder(this).setTitle("事件类型").setSingleChoiceItems(options, selected, (dialog, which) -> {
-            filter.eventId = which == 0 ? null : stats.types.get(which-1).eventId;
-            typeButton.setText(which == 0 ? "全部类型" : catalog.title(filter.eventId));
-            dialog.dismiss(); reload(0);
+            dialog.dismiss(); selectGroup(which == 0 ? null : groups.get(which-1));
         }).setNegativeButton("取消", null).show();
     }
     private static SimpleDateFormat dateFormat() {
@@ -242,21 +319,60 @@ public final class MainActivity extends Activity {
             } catch (Exception e) { Toast.makeText(this, "日期无效，请使用 YYYY-MM-DD 并检查先后顺序", Toast.LENGTH_LONG).show(); }
         })); dialog.show();
     }
+
     private void detail(MisightDatabase.Event event) {
-        String body = catalog.title(event.eventId) + "\n事件 ID：" + event.eventId + "  ·  行 ID：" + event.id +
-                "\n时间：" + EventCatalog.time(event.time, database.milliseconds) + "\noccured_cnt：" + event.occurrences +
-                "\n\n" + catalog.explanation(event.eventId) + "\n标签是阅读提示，原始字段为准。\n\n" + EventCatalog.pretty(event.raw);
-        TextView content = text(body, 13, ink); content.setTypeface(Typeface.MONOSPACE); content.setTextIsSelectable(true); content.setPadding(dp(18), dp(10), dp(18), dp(20));
-        ScrollView scroll = new ScrollView(this); scroll.addView(content);
+        EventPresenter.Card card = presenter.present(event, mask);
+        long now = System.currentTimeMillis();
+        LinearLayout box = new LinearLayout(this); box.setOrientation(LinearLayout.VERTICAL); box.setPadding(dp(20), dp(10), dp(20), dp(20));
+        TextView head = text(card.headline, 19, ink); head.setTypeface(null, Typeface.BOLD); head.setTextIsSelectable(true); box.addView(head);
+        String ago = EventCatalog.ago(event.time, millis, now);
+        StringBuilder meta = new StringBuilder(card.category).append("\n").append(EventCatalog.time(event.time, millis));
+        if (!ago.isEmpty()) meta.append("（").append(ago).append("）");
+        if (event.occurrences > 1) meta.append("\n该记录合并了 ").append(event.occurrences).append(" 次发生");
+        TextView info = text(meta.toString(), 13, muted); info.setPadding(0, dp(4), 0, dp(8)); box.addView(info);
+        String about = catalog.plainExplanation(event.eventId);
+        if (!about.isEmpty()) { TextView t = text(about, 13, ink); t.setPadding(0, 0, 0, dp(8)); box.addView(t); }
+        box.addView(sectionTitle("详细信息"));
+        if (card.fields.isEmpty()) box.addView(text("这条记录没有可读取的字段。", 13, muted));
+        for (EventPresenter.Field f : card.fields) box.addView(fieldRow(f));
+        TextView note = text("中文名称与换算是阅读辅助，以原始字段为准；本地记录不代表已上传。"
+                + (mask ? "\n敏感字段已打码，可在“更多”中关闭。" : ""), 11, muted);
+        note.setPadding(0, dp(10), 0, dp(6)); box.addView(note);
+        TextView raw = text(EventPresenter.rawText(event.raw, mask), 12, ink); raw.setTypeface(Typeface.MONOSPACE);
+        raw.setTextIsSelectable(true); raw.setVisibility(View.GONE); raw.setPadding(0, dp(6), 0, 0);
+        Button toggle = button("查看原始字段"); toggle.setOnClickListener(v -> {
+            boolean show = raw.getVisibility() != View.VISIBLE;
+            raw.setVisibility(show ? View.VISIBLE : View.GONE); toggle.setText(show ? "收起原始字段" : "查看原始字段");
+        });
+        box.addView(toggle, new LinearLayout.LayoutParams(-1, dp(44))); box.addView(raw);
+        box.addView(text("事件 ID " + event.eventId + "  ·  记录 #" + event.id, 11, muted));
+        ScrollView scroll = new ScrollView(this); scroll.addView(box);
         new AlertDialog.Builder(this).setTitle("记录详情").setView(scroll).setPositiveButton("关闭", null)
-                .setNeutralButton("复制原始字段", (d, w) -> {
+                .setNeutralButton(mask ? "复制（已打码）" : "复制原始字段", (d, w) -> {
                     ClipboardManager clipboard = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
-                    clipboard.setPrimaryClip(ClipData.newPlainText("MiSight 原始字段", event.raw));
+                    clipboard.setPrimaryClip(ClipData.newPlainText("MiSight 原始字段", EventPresenter.rawText(event.raw, mask)));
                     Toast.makeText(this, "已复制", Toast.LENGTH_SHORT).show();
                 }).show();
     }
+    private TextView sectionTitle(String label) {
+        TextView t = text(label, 13, accent); t.setTypeface(null, Typeface.BOLD); t.setPadding(0, dp(4), 0, dp(4)); return t;
+    }
+    private View fieldRow(EventPresenter.Field f) {
+        LinearLayout row = new LinearLayout(this); row.setPadding(0, dp(4), 0, dp(4));
+        TextView label = text(f.label, 12, muted); label.setTypeface(f.labelled ? Typeface.DEFAULT : Typeface.MONOSPACE);
+        TextView value = text(f.value, 14, ink); value.setTextIsSelectable(true);
+        row.addView(label, new LinearLayout.LayoutParams(dp(104), -2));
+        row.addView(value, new LinearLayout.LayoutParams(0, -2, 1));
+        return row;
+    }
     private void more() {
-        new AlertDialog.Builder(this).setItems(new String[]{"导出全部匹配记录 · JSON", "演示数据", "删除本应用的快照", "关于与读取说明"}, (d, which) -> {
+        new AlertDialog.Builder(this).setItems(new String[]{"导出全部匹配记录 · JSON", "演示数据", "敏感字段打码：" + (mask ? "开" : "关"), "删除本应用的快照", "关于与读取说明"}, (d, which) -> {
+            if (which == 2) {
+                mask = !mask; getPreferences(MODE_PRIVATE).edit().putBoolean("mask", mask).apply();
+                adapter.notifyDataSetChanged();
+                Toast.makeText(this, mask ? "已开启敏感字段打码" : "已关闭打码，详情将显示完整内容", Toast.LENGTH_SHORT).show();
+                return;
+            }
             if (busy) return;
             if (which == 0) {
                 if (database == null) { Toast.makeText(this, "请先打开数据库", Toast.LENGTH_SHORT).show(); return; }
@@ -264,9 +380,9 @@ public final class MainActivity extends Activity {
                 startActivityForResult(new Intent(Intent.ACTION_CREATE_DOCUMENT).setType("application/json").addCategory(Intent.CATEGORY_OPENABLE)
                         .putExtra(Intent.EXTRA_TITLE, "misight-records.json"), EXPORT);
             } else if (which == 1) loadSnapshot(() -> DemoDatabase.create(this), "人工演示数据 · 非真实记录");
-            else if (which == 2) clearSnapshot();
-            else new AlertDialog.Builder(this).setTitle("MiSight 查看器 0.1.0").setMessage(
-                    "支持 MiSight event_info 数据库，中文标签是辅助解释。\n\n导入已导出的 SQLite 快照无需 root。活跃数据库应导出一致性副本，单独复制主文件可能漏掉 WAL 中的记录。\n\n读取本机需要授权本应用 root：主库 /data/miuilog/misight/event.db；备份库 /mnt/rescue/misight/event.db。\n\n应用只读取快照，不修改系统数据库。没有互联网权限，不内置统计 SDK。导出的是全部匹配行，param_list 保留原始 JSON 字符串。\n\n本地记录不能单独证明存在上传。时间统一显示为北京时间。"
+            else if (which == 3) clearSnapshot();
+            else new AlertDialog.Builder(this).setTitle("MiSight 查看器 0.2.0").setMessage(
+                    "支持 MiSight event_info 数据库，中文标签是辅助解释。\n\n列表按日期分组，把应用包名换成应用名，把常见字段译成中文、把耗时和时间换算成易读格式；原始字段始终可在详情里查看。应用名取自内置名称和本机已安装的应用，其他手机导出的快照里不认识的应用会显示包名。\n\n敏感字段（号码、路径、设备地址等）默认打码，可在“更多”中关闭。\n\n导入已导出的 SQLite 快照无需 root。活跃数据库应导出一致性副本，单独复制主文件可能漏掉 WAL 中的记录。\n\n读取本机需要授权本应用 root：主库 /data/miuilog/misight/event.db；备份库 /mnt/rescue/misight/event.db。\n\n应用只读取快照，不修改系统数据库。没有互联网权限，不内置统计 SDK。导出的是全部匹配行，param_list 保留原始 JSON 字符串，并附带事件名称。\n\n本地记录不能单独证明存在上传。时间统一显示为北京时间。"
             ).setPositiveButton("知道了", null).show();
         }).show();
     }
@@ -278,7 +394,12 @@ public final class MainActivity extends Activity {
                     worker.execute(() -> {
                         File file = database.file; database.close(); database = null; SnapshotImporter.remove(file);
                         getPreferences(MODE_PRIVATE).edit().remove("snapshot").apply();
-                        ui(() -> { stats = null; rows.clear(); adapter.notifyDataSetChanged(); overview.setText("尚未打开数据库"); source.setText("导入或读取本机快照开始查看"); busy(false, "快照已删除"); prev.setEnabled(false); next.setEnabled(false); pageText.setText("—"); });
+                        ui(() -> {
+                            stats = null; rows.clear(); items.clear(); groups.clear(); activeGroup = null; filter.eventIds = null;
+                            adapter.notifyDataSetChanged(); rebuildChips(); highlights.setVisibility(View.GONE);
+                            overview.setText("尚未打开数据库"); source.setText("导入或读取本机快照开始查看"); busy(false, "快照已删除");
+                            prev.setEnabled(false); next.setEnabled(false); pageText.setText("—");
+                        });
                     });
                 }).show();
     }
@@ -296,9 +417,10 @@ public final class MainActivity extends Activity {
             MisightDatabase.Filter selected = exportFilter == null ? filter.copy() : exportFilter;
             worker.execute(() -> {
                 try {
+                    expandSearch(selected);
                     OutputStream out = getContentResolver().openOutputStream(uri, "wt");
                     if (out == null) throw new java.io.IOException("无法写入所选位置");
-                    long count = database.export(selected, new OutputStreamWriter(out, StandardCharsets.UTF_8));
+                    long count = database.export(selected, new OutputStreamWriter(out, StandardCharsets.UTF_8), catalog);
                     ui(() -> { busy(false, "已导出 " + count + " 条匹配记录"); reload(page); Toast.makeText(this, "已导出 " + count + " 条记录", Toast.LENGTH_LONG).show(); });
                 } catch (Exception e) { ui(() -> { busy(false, "导出失败"); reload(page); error(e); }); }
             });
@@ -319,28 +441,45 @@ public final class MainActivity extends Activity {
         worker.execute(() -> { if (database != null) { database.close(); database = null; } });
         worker.shutdown(); super.onDestroy();
     }
+    private static final class CardViews { TextView category, time, headline, facts; }
     private final class EventAdapter extends BaseAdapter {
-        public int getCount() { return rows.size(); }
-        public Object getItem(int position) { return rows.get(position); }
-        public long getItemId(int position) { return rows.get(position).id; }
+        public int getCount() { return items.size(); }
+        public Object getItem(int position) { return items.get(position); }
+        public long getItemId(int position) { Object o = items.get(position); return o instanceof MisightDatabase.Event ? ((MisightDatabase.Event) o).id : -position - 1; }
+        @Override public int getViewTypeCount() { return 2; }
+        @Override public int getItemViewType(int position) { return items.get(position) instanceof MisightDatabase.Event ? 1 : 0; }
+        @Override public boolean isEnabled(int position) { return items.get(position) instanceof MisightDatabase.Event; }
         public View getView(int position, View recycled, ViewGroup parent) {
-            LinearLayout box; TextView time, title, hint, raw;
-            if (recycled == null) {
-                box = new LinearLayout(MainActivity.this); box.setOrientation(LinearLayout.VERTICAL);
+            Object item = items.get(position);
+            if (!(item instanceof MisightDatabase.Event)) {
+                TextView header = recycled instanceof TextView ? (TextView) recycled : text("", 13, muted);
+                header.setTypeface(null, Typeface.BOLD); header.setPadding(dp(4), dp(10), dp(4), dp(6)); header.setText((String) item);
+                return header;
+            }
+            FrameLayout wrap; CardViews views;
+            if (recycled instanceof FrameLayout) { wrap = (FrameLayout) recycled; views = (CardViews) wrap.getTag(); }
+            else {
+                wrap = new FrameLayout(MainActivity.this); wrap.setPadding(0, 0, 0, dp(8));
+                LinearLayout box = new LinearLayout(MainActivity.this); box.setOrientation(LinearLayout.VERTICAL);
                 box.setPadding(dp(13), dp(10), dp(13), dp(11)); box.setBackground(rounded(surface, 13));
-                time = text("", 11, muted); title = text("", 15, ink); title.setTypeface(null, Typeface.BOLD);
-                hint = text("", 12, accent); hint.setMaxLines(2); raw = text("", 12, muted); raw.setMaxLines(2);
-                box.addView(time); box.addView(title); box.addView(hint); box.addView(raw);
-                box.setTag(new TextView[]{time,title,hint,raw});
-                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(-1,-2); lp.setMargins(0,0,0,dp(8));
-                // ListView ignores child margins; a separator below each card supplies spacing.
-                box.setMinimumHeight(dp(114));
-            } else box = (LinearLayout)recycled;
-            TextView[] views = (TextView[])box.getTag(); MisightDatabase.Event e = rows.get(position);
-            views[0].setText(EventCatalog.time(e.time, database.milliseconds) + "  ·  #" + e.id);
-            views[1].setText(catalog.title(e.eventId) + "  " + e.eventId);
-            String value = EventCatalog.packageHint(e.raw); views[2].setText(value); views[2].setVisibility(value.isEmpty() ? View.GONE : View.VISIBLE);
-            views[3].setText(EventCatalog.preview(e.raw)); return box;
+                views = new CardViews();
+                views.category = text("", 11, accent); views.time = text("", 11, muted);
+                LinearLayout top = new LinearLayout(MainActivity.this);
+                top.addView(views.category, new LinearLayout.LayoutParams(0, -2, 1)); top.addView(views.time);
+                views.headline = text("", 15, ink); views.headline.setTypeface(null, Typeface.BOLD); views.headline.setMaxLines(2);
+                views.headline.setPadding(0, dp(3), 0, 0);
+                views.facts = text("", 12, muted); views.facts.setMaxLines(2); views.facts.setPadding(0, dp(2), 0, 0);
+                box.addView(top); box.addView(views.headline); box.addView(views.facts);
+                wrap.addView(box, new FrameLayout.LayoutParams(-1, -2)); wrap.setTag(views);
+            }
+            MisightDatabase.Event e = (MisightDatabase.Event) item;
+            EventPresenter.Card card = presenter.present(e, mask);
+            views.category.setText(card.category);
+            views.time.setText(EventCatalog.clock(e.time, millis) + (e.occurrences > 1 ? "  ·  ×" + e.occurrences : ""));
+            views.headline.setText(card.headline);
+            String facts = presenter.facts(card, 3);
+            views.facts.setText(facts); views.facts.setVisibility(facts.isEmpty() ? View.GONE : View.VISIBLE);
+            return wrap;
         }
     }
 }
