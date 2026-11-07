@@ -163,7 +163,7 @@ public final class EventPresenter {
     /** First few readable "label：value" facts for list rows, prioritizing key privacy and diagnostic items. */
     public String facts(Card card, int max) {
         StringBuilder sb = new StringBuilder(); int n = 0;
-        String[] priorityKeys = {"c", "p", "isVpn", "call_duration", "CallDirect", "call_cell_id", "call_pci", "ueSpecialScene", "fivegOptimizeScene", "path", "DeviceName", "DeviceMac", "unlockType"};
+        String[] priorityKeys = {"c", "p", "isVpn", "call_duration", "call_begin_time", "call_end_time", "dl_rtp_packet_loss_count", "CallDirect", "call_cell_id", "call_pci", "ueSpecialScene", "fivegOptimizeScene", "path", "DeviceName", "DeviceMac", "unlockType"};
         for (String pk : priorityKeys) {
             if (n >= max) break;
             for (Field f : card.fields) {
@@ -251,12 +251,14 @@ public final class EventPresenter {
         } else if (id == 915200012L) {
             long dur = o.optLong("call_duration", -1);
             String begin = o.optString("call_begin_time", "");
-            StringBuilder sb = new StringBuilder("📞 通话记录");
+            long loss = o.optLong("dl_rtp_packet_loss_count", 0);
+            StringBuilder sb = new StringBuilder("📞 通话时间与时长质量");
             if (dur >= 0) sb.append(" · 时长 ").append(dur).append(" 秒");
             if (!begin.isEmpty()) {
                 int sp = begin.indexOf(' ');
                 sb.append(" (").append(sp > 0 ? begin.substring(sp + 1) : begin).append(")");
             }
+            if (loss > 0) sb.append(" · 下行丢包 ").append(loss);
             return sb.toString();
         } else if (id == 915200011L) {
             String dir = o.optString("CallDirect", "");

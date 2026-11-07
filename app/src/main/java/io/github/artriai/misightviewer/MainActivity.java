@@ -224,11 +224,12 @@ public final class MainActivity extends Activity {
                     source.setText(description + "\n" + EventCatalog.time(stats.first, opened.milliseconds) + " — " + EventCatalog.time(stats.last, opened.milliseconds));
 
                     long privacyTotal = 0;
-                    long appSwitchCount = 0, locCount = 0, callCount = 0, mediaCount = 0, unlockCount = 0, vpnCount = 0;
+                    long appSwitchCount = 0, locCount = 0, callCount = 0, cellCount = 0, mediaCount = 0, unlockCount = 0, vpnCount = 0;
                     for (MisightDatabase.TypeCount t : stats.types) {
                         if (isPrivacy(t.eventId)) privacyTotal += t.count;
                         if (t.eventId == 907400027L) appSwitchCount += t.count;
                         else if (t.eventId == 915100017L) locCount += t.count;
+                        else if (t.eventId == 915200015L) cellCount += t.count;
                         else if (t.eventId >= 915200000L && t.eventId <= 915299999L) callCount += t.count;
                         else if (t.eventId == 923525000L) mediaCount += t.count;
                         else if (t.eventId == 923044101L) unlockCount += t.count;
@@ -242,7 +243,8 @@ public final class MainActivity extends Activity {
                         List<String> parts = new ArrayList<>();
                         if (appSwitchCount > 0) parts.add("📱 应用切换 " + String.format(Locale.CHINA, "%,d", appSwitchCount));
                         if (locCount > 0) parts.add("📍 省市位置 " + String.format(Locale.CHINA, "%,d", locCount));
-                        if (callCount > 0) parts.add("📞 通话与基站 " + String.format(Locale.CHINA, "%,d", callCount));
+                        if (callCount > 0) parts.add("📞 通话时间与时长质量 " + String.format(Locale.CHINA, "%,d", callCount));
+                        if (cellCount > 0) parts.add("🗼 通话基站小区 " + String.format(Locale.CHINA, "%,d", cellCount));
                         if (mediaCount > 0) parts.add("🖼️ 相册 " + String.format(Locale.CHINA, "%,d", mediaCount));
                         if (unlockCount > 0) parts.add("🔓 解锁 " + String.format(Locale.CHINA, "%,d", unlockCount));
                         if (vpnCount > 0) parts.add("🛡️ VPN " + String.format(Locale.CHINA, "%,d", vpnCount));
@@ -408,8 +410,7 @@ public final class MainActivity extends Activity {
         box.addView(sectionTitle("详细信息"));
         if (card.fields.isEmpty()) box.addView(text("这条记录没有可读取的字段。", 13, muted));
         for (EventPresenter.Field f : card.fields) box.addView(fieldRow(f));
-        TextView note = text("中文名称与换算是阅读辅助，以原始字段为准；本地记录不代表已上传。"
-                + (mask ? "\n敏感字段已打码，可在“更多”中关闭。" : ""), 11, muted);
+        TextView note = text("中文名称与换算是阅读辅助，以原始字段为准；本地记录不代表已上传。", 11, muted);
         note.setPadding(0, dp(10), 0, dp(6)); box.addView(note);
 
         TextView raw = text(EventCatalog.pretty(event.raw), 12, ink); raw.setTypeface(Typeface.MONOSPACE);
@@ -440,25 +441,55 @@ public final class MainActivity extends Activity {
         return row;
     }
     private void more() {
-        new AlertDialog.Builder(this).setItems(new String[]{"导出全部匹配记录 · JSON", "演示数据", "敏感字段打码：" + (mask ? "开" : "关"), "删除本应用的快照", "关于与读取说明"}, (d, which) -> {
-            if (which == 2) {
-                mask = !mask; getPreferences(MODE_PRIVATE).edit().putBoolean("mask", mask).apply();
-                adapter.notifyDataSetChanged();
-                Toast.makeText(this, mask ? "已开启敏感字段打码" : "已关闭打码，详情将显示完整内容", Toast.LENGTH_SHORT).show();
-                return;
-            }
+        new AlertDialog.Builder(this).setItems(new String[]{
+                "导出全部匹配记录 · JSON",
+                "删除本应用快照",
+                "GitHub 开源项目 · 欢迎 Star ⭐",
+                "关于"
+        }, (d, which) -> {
             if (busy) return;
             if (which == 0) {
                 if (database == null) { Toast.makeText(this, "请先打开数据库", Toast.LENGTH_SHORT).show(); return; }
                 exportFilter = filter.copy();
                 startActivityForResult(new Intent(Intent.ACTION_CREATE_DOCUMENT).setType("application/json").addCategory(Intent.CATEGORY_OPENABLE)
                         .putExtra(Intent.EXTRA_TITLE, "misight-records.json"), EXPORT);
-            } else if (which == 1) loadSnapshot(() -> DemoDatabase.create(this), "人工演示数据 · 非真实记录");
-            else if (which == 3) clearSnapshot();
-            else new AlertDialog.Builder(this).setTitle("MiSight 查看器 0.2.2").setMessage(
-                    "支持 MiSight event_info 数据库，中文标签是辅助解释。\n\n列表按日期分组，突出展示被监控感极强的高敏感记录：\n· 📱 应用前后台切换（每分每秒使用应用的切换轨迹）\n· 📍 驻留省市与网络场景（详细地级市、停留时长、电梯/高铁模式）\n· 📞 通话记录与通话基站小区（Cell ID 精准基站塔、通话时长）\n· 🛡️ VPN 代理使用状态\n· 🖼️ 相册图片/视频绝对路径与删除记录\n· 🔓 屏幕解锁方式与鉴权耗时\n· 📷 相机/麦克风调用记录\n\n详情页“复制原始字段”与“查看原始字段”均完整展示未打码原始 JSON。\n\n内置固定签名证书，云端构建固定统一密钥签名。\n\n导入已导出的 SQLite 快照无需 root。读取本机需要授权 root。\n\n应用只读取快照，不修改系统数据库。没有互联网权限，不内置统计 SDK。"
-            ).setPositiveButton("知道了", null).show();
+            } else if (which == 1) {
+                clearSnapshot();
+            } else if (which == 2) {
+                showRepoDialog();
+            } else if (which == 3) {
+                new AlertDialog.Builder(this).setTitle("MiSight 查看器 0.2.3").setMessage(
+                        "本地离线取证工具，只读分析 MIUI / HyperOS 系统日志（MiSight）数据库。\n\n"
+                                + "· 📱 核心监控轨迹：应用前后台切换、驻留省市场景、通话时间与时长质量、通话基站小区（Cell ID）、相册照片路径与删除、VPN 代理状态、屏幕解锁等\n"
+                                + "· 📋 原始字段：详情页支持完整未打码查看、复制与导出 JSON\n"
+                                + "· 🔒 安全保证：纯本地运行，无网络权限，不内置任何统计 SDK\n"
+                                + "· 📂 数据读取：本机需 Root，导入快照无需 Root\n\n"
+                                + "开源仓库：https://github.com/Artriai/misight-viewer"
+                ).setPositiveButton("知道了", null).show();
+            }
         }).show();
+    }
+    private void showRepoDialog() {
+        String repoUrl = "https://github.com/Artriai/misight-viewer";
+        new AlertDialog.Builder(this)
+                .setTitle("GitHub 开源项目")
+                .setMessage(repoUrl + "\n\n本项目完全开源透明，如果对你有帮助，欢迎在 GitHub 点个 Star ⭐ 支持！")
+                .setPositiveButton("在浏览器打开", (d, w) -> {
+                    try {
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(repoUrl)));
+                    } catch (Exception e) {
+                        ClipboardManager clipboard = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
+                        clipboard.setPrimaryClip(ClipData.newPlainText("MiSight GitHub", repoUrl));
+                        Toast.makeText(this, "未找到浏览器，已复制链接到剪贴板", Toast.LENGTH_LONG).show();
+                    }
+                })
+                .setNeutralButton("复制链接", (d, w) -> {
+                    ClipboardManager clipboard = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
+                    clipboard.setPrimaryClip(ClipData.newPlainText("MiSight GitHub", repoUrl));
+                    Toast.makeText(this, "已复制项目链接：" + repoUrl, Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton("关闭", null)
+                .show();
     }
     private void clearSnapshot() {
         if (database == null) return;
