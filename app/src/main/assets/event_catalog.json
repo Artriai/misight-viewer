@@ -64,8 +64,8 @@
     "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：animTypeSet, currentTime, existAnims, newAnim, viewName"
   },
   "923525000": {
-    "title": "媒体文件操作",
-    "description": "保存操作类型、来源包名和文件路径；路径不等于图片或视频内容。操作编号的含义需要对应系统代码确认。\n可能字段：isFromExternal, operationType, packageName, path[]"
+    "title": "相册与媒体文件操作",
+    "description": "【高敏感】完整记录相册图片、视频或截屏的绝对文件路径（包含照片拍照时间、图片类型、来源应用名以及移入回收站/删除操作），直接暴露用户的相册文件名称。\n可能字段：isFromExternal, operationType, packageName, path[]"
   },
   "904003001": {
     "title": "安全状态诊断",
@@ -96,8 +96,8 @@
     "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：EventValue, count"
   },
   "915100017": {
-    "title": "省市与网络场景",
-    "description": "省市字符串的来源和准确性需核验，不能仅凭此事件确认真实行程。\n可能字段：UploadLog, c, duration, fivegEnable, fivegOptimizeScene, foregroundActivity, imsReg, netRejectCause, p, prefNetMode, saEnable, volteEnable, ueSpecialScene"
+    "title": "驻留省市与网络场景",
+    "description": "【高敏感】明确记录手机当前驻留的省份（p）、地级城市（c）、停留时长（duration）、特殊行为场景（如电梯模式 elevatorMode、夜间优化等）及前台应用，清晰记录了用户的地理省市移动轨迹与场景。\n可能字段：UploadLog, c, duration, fivegEnable, fivegOptimizeScene, foregroundActivity, imsReg, netRejectCause, p, prefNetMode, saEnable, volteEnable, ueSpecialScene"
   },
   "902006000": {
     "title": "应用启动与性能",
@@ -164,8 +164,8 @@
     "description": "部分样本对应壁纸偏移，不能直接视作触摸轨迹或地理坐标。\n可能字段：displayId, offsetX, offsetY, positionX, positionY, rotation, callStack, window"
   },
   "915200012": {
-    "title": "通话时间与质量",
-    "description": "可包含通话时间、时长和网络质量指标；事件行数不等于独立通话次数。\n可能字段：band, call_begin_time, call_duration, call_end_time, dl_bler, dl_loss_packet_level_times[], dl_rtp_500_times, dl_rtp_packet_loss_count, dl_rtp_packet_total_count, dl_rtp_silent_times, dl_under_flow_count, hplmn, rsrp[], snr[], subId, ul_rtp_silent_times, vplmn, dl_loss_packet_rate_statics[], cs_flag, is_roam, rat_type, rtp_3s_loss_gt10pct_times, rtp_3s_no_packet_times, rtp_no_dl_packet…"
+    "title": "通话时间与时长质量",
+    "description": "【高敏感】包含通话精确开始与结束时间、通话时长（秒）、SIM 卡号、归属与驻留运营商网络、语音包数量与丢包质量。完整记录了每次电话通信的起止时点。\n可能字段：band, call_begin_time, call_duration, call_end_time, dl_bler, dl_loss_packet_level_times[], dl_rtp_500_times, dl_rtp_packet_loss_count, dl_rtp_packet_total_count, dl_rtp_silent_times, dl_under_flow_count, hplmn, rsrp[], snr[], subId, ul_rtp_silent_times, vplmn, dl_loss_packet_rate_statics[], cs_flag, is_roam, rat_type, rtp_3s_loss_gt10pct_times, rtp_3s_no_packet_times, rtp_no_dl_packet…"
   },
   "902006602": {
     "title": "应用性能",
@@ -196,8 +196,8 @@
     "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：ActualHalFps, ActualRenderFps, AftGPUMem, AftMemAvailable, AftMemCache, AftMemCacheRSS, AftMemFree, AftMemSlabReclaimable, AftMemSlabUnreclaimable, AftReserveFree, AftSrcPoolFree, AppMoudle, BatteryLevel, CPUFreq, CPUPSI, CPUTemp, DurationMs, Event, EventType, ExpectedFps, ExposureTimeNs, Facing, IOPSI, LookbackTime…"
   },
   "915200011": {
-    "title": "蜂窝网络",
-    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：CallDirect, CallType, Network, time"
+    "title": "通话呼叫建立",
+    "description": "【高敏感】记录通话发起与接听状态，包括呼入（MT）与呼出（MO）、VoNR 5G 或 VoLTE 高清语音通话类型、运营商网络及接通延迟。\n可能字段：CallDirect, CallType, Network, time"
   },
   "919011101": {
     "title": "定位诊断",
@@ -224,8 +224,8 @@
     "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：displayID, entryCode, focusApplicationName"
   },
   "915200015": {
-    "title": "通话基站与无线指标",
-    "description": "包含基站及无线指标；时间字段可能有异常，不能直接当作准确定位轨迹。\n可能字段：call_aver_mtpl, call_aver_pusch_pa, call_band_switch_flag, call_begin_band, call_cell_id, call_dl_bler, call_end_band, call_end_reason, call_end_underflow_loss_rate, call_fbrx_error_flag, call_is_roam, call_nr5g_irat_lte_flag, call_pci, call_rat, call_rtp_sn_not_update_flag, call_ul_bler, lte_call_deactivate_eps_bearer_cause, lte_call_deactivate_eps_bearer_flag, lte_call_rach_contention, lte_call_rach_contention_procedure, lte_call_rach_reason, lte_call_rach_result, nr5g_call_pdu_session_release_cause, nr5g_call_pdu_session_release_flag…"
+    "title": "通话基站与小区指标",
+    "description": "【高敏感】包含通话时所连接的精确蜂窝移动基站（Cell ID）及小区物理识别码（PCI）、频段和无线指标，可用于精确反查通话时的基站地理位置。\n可能字段：call_aver_mtpl, call_aver_pusch_pa, call_band_switch_flag, call_begin_band, call_cell_id, call_dl_bler, call_end_band, call_end_reason, call_end_underflow_loss_rate, call_fbrx_error_flag, call_is_roam, call_nr5g_irat_lte_flag, call_pci, call_rat, call_rtp_sn_not_update_flag, call_ul_bler, lte_call_deactivate_eps_bearer_cause, lte_call_deactivate_eps_bearer_flag, lte_call_rach_contention, lte_call_rach_contention_procedure, lte_call_rach_reason, lte_call_rach_result, nr5g_call_pdu_session_release_cause, nr5g_call_pdu_session_release_flag…"
   },
   "916012002": {
     "title": "Wi-Fi 与网络",

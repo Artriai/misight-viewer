@@ -56,6 +56,22 @@ public class ReadabilityTest {
         assertTrue(EventPresenter.rawText(raw, false).contains("DCIM"));
         assertTrue(field(presenter().present(event(923525000L, raw), false), "DeviceMac").contains("BB:CC"));
     }
+    @Test public void locationProvinceAndCityAreFormatted() {
+        String raw = "{\"p\":\"Guangdong\",\"c\":\"Guangzhou\",\"ueSpecialScene\":\"elevatorMode\",\"duration\":\"9501894\"}";
+        EventPresenter.Card card = presenter().present(event(915100017L, raw), false);
+        assertTrue(card.headline.contains("广州"));
+        assertTrue(card.headline.contains("广东"));
+        assertTrue(card.headline.contains("电梯"));
+        assertEquals("城市/地级市=广州市（Guangzhou）", field(card, "c"));
+        assertEquals("省份/地区=广东省（Guangdong）", field(card, "p"));
+    }
+    @Test public void callRecordsAreFormatted() {
+        String raw = "{\"CallDirect\":\"MT\",\"CallType\":\"VoNR\",\"call_duration\":55,\"call_begin_time\":\"2026-04-24 10:05:43\"}";
+        EventPresenter.Card card = presenter().present(event(915200012L, raw), false);
+        assertTrue(card.headline.contains("55"));
+        assertTrue(card.headline.contains("通话"));
+        assertEquals("通话时长=55.00 秒", field(card, "call_duration"));
+    }
     @Test public void malformedPayloadStillShowsSomething() {
         EventPresenter.Card card = presenter().present(event(1L, "not valid json"), true);
         assertFalse(card.json); assertEquals("内容=not valid json", field(card, ""));

@@ -1,13 +1,40 @@
 {
-  "PackageName": ["应用", "pkg"],
-  "pkgName": ["应用", "pkg"],
-  "pkg_name": ["应用", "pkg"],
-  "foregroundPkg": ["前台应用", "pkg"],
-  "callerPkgName": ["调用方应用", "pkg"],
-  "callerPkg": ["调用方应用", "pkg"],
-  "calleePkgName": ["被调用应用", "pkg"],
-  "sourcePackageName": ["来源应用", "pkg"],
-  "LaunchFromPackage": ["来源应用", "pkg"],
+  "PackageName": [
+    "应用",
+    "pkg"
+  ],
+  "pkgName": [
+    "应用",
+    "pkg"
+  ],
+  "pkg_name": [
+    "应用",
+    "pkg"
+  ],
+  "foregroundPkg": [
+    "前台应用",
+    "pkg"
+  ],
+  "callerPkgName": [
+    "调用方应用",
+    "pkg"
+  ],
+  "callerPkg": [
+    "调用方应用",
+    "pkg"
+  ],
+  "calleePkgName": [
+    "被调用应用",
+    "pkg"
+  ],
+  "sourcePackageName": [
+    "来源应用",
+    "pkg"
+  ],
+  "LaunchFromPackage": [
+    "来源应用",
+    "pkg"
+  ],
   "AppName": "应用名称",
   "AppModule": "应用模块",
   "AppMoudle": "应用模块",
@@ -29,7 +56,6 @@
   "userId": "用户编号",
   "callerUserId": "调用方用户编号",
   "calleeUserId": "被调用方用户编号",
-
   "reason": "原因",
   "cause": "原因",
   "CaseName": "场景",
@@ -41,7 +67,10 @@
   "Type": "类型",
   "trigger": "触发方式",
   "action": "动作",
-  "allow": ["是否允许", "bool"],
+  "allow": [
+    "是否允许",
+    "bool"
+  ],
   "wakeType": "唤醒方式",
   "change": "状态变化",
   "errorCode": "错误码",
@@ -60,29 +89,78 @@
   "callStack": "调用栈",
   "CrashType": "崩溃类型",
   "AnrType": "无响应类型",
-  "IsForeground": ["是否前台", "bool"],
+  "IsForeground": [
+    "是否前台",
+    "bool"
+  ],
   "BootReason": "开机原因",
   "RecoveryResult": "恢复结果",
   "RecoveryMethod": "恢复方式",
   "RecoveryStage": "恢复阶段",
-
-  "currentTime": ["记录时间", "time"],
-  "CurrentTime": ["记录时间", "time"],
-  "HappenTime": ["发生时间", "time"],
-  "timestamp": ["时间戳", "time"],
-  "TimeStamp": ["时间戳", "time"],
-  "EventTime": ["事件时间", "time"],
-  "eventTime": ["事件时间", "time"],
-  "startTime": ["开始时间", "time"],
-  "endTime": ["结束时间", "time"],
-  "LastTraceTime": ["上次抓取时间", "time"],
-  "call_begin_time": ["通话开始时间", "time"],
-  "call_end_time": ["通话结束时间", "time"],
-
-  "DurationMs": ["耗时", "ms"],
-  "durMs": ["耗时", "ms"],
-  "thresMs": ["阈值", "ms"],
-  "GapMs": ["间隔", "ms"],
+  "currentTime": [
+    "记录时间",
+    "time"
+  ],
+  "CurrentTime": [
+    "记录时间",
+    "time"
+  ],
+  "HappenTime": [
+    "发生时间",
+    "time"
+  ],
+  "timestamp": [
+    "时间戳",
+    "time"
+  ],
+  "TimeStamp": [
+    "时间戳",
+    "time"
+  ],
+  "EventTime": [
+    "事件时间",
+    "time"
+  ],
+  "eventTime": [
+    "事件时间",
+    "time"
+  ],
+  "startTime": [
+    "开始时间",
+    "time"
+  ],
+  "endTime": [
+    "结束时间",
+    "time"
+  ],
+  "LastTraceTime": [
+    "上次抓取时间",
+    "time"
+  ],
+  "call_begin_time": [
+    "通话开始时间",
+    "time"
+  ],
+  "call_end_time": [
+    "通话结束时间",
+    "time"
+  ],
+  "DurationMs": [
+    "耗时",
+    "ms"
+  ],
+  "durMs": [
+    "耗时",
+    "ms"
+  ],
+  "thresMs": [
+    "阈值",
+    "ms"
+  ],
+  "GapMs": [
+    "间隔",
+    "ms"
+  ],
   "Duration": "时长",
   "duration": "时长",
   "call_duration": "通话时长",
@@ -97,7 +175,6 @@
   "screenOnTime": "亮屏时长",
   "screenOffTime": "息屏时长",
   "onBatteryTime": "电池供电时长",
-
   "FPSMode": "帧率模式",
   "FPSTriggerReason": "帧率触发原因",
   "ActualRenderFps": "实际渲染帧率",
@@ -107,7 +184,6 @@
   "targetFPS": "目标帧率",
   "displayRefreshRate": "屏幕刷新率",
   "perfMode": "性能模式",
-
   "CpuLoad": "CPU 负载",
   "CPUTemp": "CPU 温度",
   "AmbientTemp": "环境温度",
@@ -134,7 +210,6 @@
   "CPUPSI": "CPU 压力",
   "IOPSI": "IO 压力",
   "KillNum": "被结束进程数",
-
   "NetType": "网络类型",
   "Network": "网络",
   "networkType": "网络类型",
@@ -147,12 +222,30 @@
   "band": "频段",
   "Apn": "接入点（APN）",
   "ApnType": "接入点类型",
-  "roaming": ["是否漫游", "bool"],
-  "is_roam": ["是否漫游", "bool"],
-  "isVpn": ["是否 VPN", "bool"],
-  "wifiActive": ["Wi-Fi 是否开启", "bool"],
-  "userDataEnable": ["移动数据是否开启", "bool"],
-  "isInCall": ["是否通话中", "bool"],
+  "roaming": [
+    "是否漫游",
+    "bool"
+  ],
+  "is_roam": [
+    "是否漫游",
+    "bool"
+  ],
+  "isVpn": [
+    "是否 VPN",
+    "bool"
+  ],
+  "wifiActive": [
+    "Wi-Fi 是否开启",
+    "bool"
+  ],
+  "userDataEnable": [
+    "移动数据是否开启",
+    "bool"
+  ],
+  "isInCall": [
+    "是否通话中",
+    "bool"
+  ],
   "hplmn": "归属网络",
   "vplmn": "当前驻留网络",
   "subId": "SIM 卡编号",
@@ -178,7 +271,6 @@
   "CameraId": "摄像头编号",
   "Facing": "摄像头朝向",
   "ClientType": "调用方类型",
-
   "unlockType": "解锁方式",
   "unlockCase": "解锁场景",
   "unlockTarget": "解锁目标",
@@ -189,7 +281,6 @@
   "animType": "动画类型",
   "operationType": "操作类型",
   "path": "文件路径",
-
   "count": "次数",
   "totalCount": "总次数",
   "maxCount": "最大次数",
@@ -203,5 +294,98 @@
   "lastDeathReason": "上次结束原因",
   "caller": "调用方",
   "syncId": "同步编号",
-  "id": "编号"
+  "id": "编号",
+  "p": "省份/地区",
+  "c": "城市/地级市",
+  "ueSpecialScene": "特殊行为场景",
+  "fivegOptimizeScene": "5G优化场景",
+  "UploadLog": [
+    "是否允许上传日志",
+    "bool"
+  ],
+  "fivegEnable": [
+    "5G是否开启",
+    "bool"
+  ],
+  "saEnable": [
+    "5G SA是否开启",
+    "bool"
+  ],
+  "volteEnable": [
+    "VoLTE是否开启",
+    "bool"
+  ],
+  "imsReg": [
+    "IMS是否注册",
+    "bool"
+  ],
+  "prefNetMode": "首选网络模式",
+  "netRejectCause": "网络拒绝原因码",
+  "call_cell_id": "通话基站（Cell ID）",
+  "call_pci": "小区物理标识（PCI）",
+  "call_is_roam": [
+    "通话是否漫游",
+    "bool"
+  ],
+  "call_begin_band": "通话开始频段",
+  "call_end_band": "通话结束频段",
+  "call_ul_bler": "通话上行误码率",
+  "call_dl_bler": "通话下行误码率",
+  "dl_bler": "下行误码率",
+  "dl_rtp_packet_total_count": "下行语音包总数",
+  "dl_rtp_packet_loss_count": "下行语音丢包数",
+  "dl_rtp_silent_times": "下行静音次数",
+  "ul_rtp_silent_times": "上行静音时长",
+  "dl_rtp_500_times": "语音包延迟>500ms次数",
+  "dl_under_flow_count": "下行语音缓冲区下溢次数",
+  "isFromExternal": [
+    "是否来自外部存储",
+    "bool"
+  ],
+  "SvCount": "可见/搜星卫星数",
+  "WifiMaxRssi": "最强Wi-Fi信号强度",
+  "PermissionError": "定位权限错误",
+  "DataSources": "定位数据源/结果",
+  "GeocodeError": "地理逆编码错误",
+  "CRSCall": [
+    "视频彩铃",
+    "bool"
+  ],
+  "RingtonePlayed": [
+    "是否播放铃声",
+    "bool"
+  ],
+  "RingtoneVolume": "铃声音量",
+  "DND": [
+    "勿扰模式",
+    "bool"
+  ],
+  "ColumeOverZero": [
+    "音量大于零",
+    "bool"
+  ],
+  "RingingUriIsNull": [
+    "铃声URI是否为空",
+    "bool"
+  ],
+  "VoiceReport": [
+    "语音播报",
+    "bool"
+  ],
+  "authSuccDur": [
+    "鉴权成功耗时",
+    "ms"
+  ],
+  "reqAuthDur": [
+    "请求鉴权耗时",
+    "ms"
+  ],
+  "endStageDur": [
+    "结束阶段耗时",
+    "ms"
+  ],
+  "kgAwayDur": [
+    "锁屏消失耗时",
+    "ms"
+  ]
 }

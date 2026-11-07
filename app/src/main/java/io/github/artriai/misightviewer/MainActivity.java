@@ -33,6 +33,20 @@ import java.util.concurrent.atomic.AtomicLong;
 public final class MainActivity extends Activity {
     private static final int IMPORT = 10, EXPORT = 11;
     private static final int CHIP_COUNT = 6;
+
+    public static final Set<Long> PRIVACY_IDS = new HashSet<>(Arrays.asList(
+        915100017L, // 驻留省市与网络场景
+        915200006L, 915200010L, 915200011L, 915200012L, 915200013L, 915200015L, // 通话记录、呼叫、基站
+        923525000L, // 相册/媒体文件访问与删除
+        917020102L, 917020105L, 917020301L, 917020701L, 917020703L, 917042101L, 917043001L, // 蓝牙外设与MAC
+        919011101L, 919011102L, 919012101L, 919022002L, 919032001L, // 定位诊断与权限
+        907404002L, // 应用间唤醒
+        923044101L  // 屏幕解锁耗时与方式
+    ));
+    public static boolean isPrivacy(long id) {
+        return PRIVACY_IDS.contains(id) || (id >= 915200000L && id <= 915299999L);
+    }
+
     private final ExecutorService worker = Executors.newSingleThreadExecutor();
     private final Handler main = new Handler(Looper.getMainLooper());
     private final AtomicLong generation = new AtomicLong();
@@ -54,9 +68,11 @@ public final class MainActivity extends Activity {
     private LinearLayout chipRow;
     private ProgressBar progress;
     private int page;
-    private boolean busy, destroyed, millis, mask = true;
+    private boolean busy, destroyed, millis, mask = false;
     private Group activeGroup;
-    private int bg, surface, ink, muted, accent, border;
+    private boolean privacyOnly = false;
+    private long privacyTotalCount = 0;
+    private int bg, surface, ink, muted, accent, border, alertColor;
     private String dateLabel = "日期";
     private MisightDatabase.Filter exportFilter;
     private final Runnable delayedSearch = () -> reload(0);
@@ -70,7 +86,7 @@ public final class MainActivity extends Activity {
     @Override public void onCreate(Bundle state) {
         super.onCreate(state);
         catalog = new EventCatalog(this); apps = new AppNames(this); presenter = new EventPresenter(catalog, apps);
-        mask = getPreferences(MODE_PRIVATE).getBoolean("mask", true);
+        mask = getPreferences(MODE_PRIVATE).getBoolean("mask", false);
         buildUi();
         String name = getPreferences(MODE_PRIVATE).getString("snapshot", "");
         if (!name.isEmpty() && name.matches("snapshot-[a-zA-Z0-9-]+\\.db")) {
@@ -105,6 +121,7 @@ public final class MainActivity extends Activity {
         muted = Color.parseColor(dark ? "#A0B6AA" : "#5E7468");
         accent = Color.parseColor(dark ? "#6CE5C0" : "#087F68");
         border = Color.parseColor(dark ? "#2B3B32" : "#E4ECE6");
+        alertColor = Color.parseColor(dark ? "#FF7A7A" : "#D32F2F");
         getWindow().setStatusBarColor(bg); getWindow().setNavigationBarColor(bg);
         LinearLayout root = new LinearLayout(this); root.setOrientation(LinearLayout.VERTICAL); root.setBackgroundColor(bg);
         root.setPadding(dp(16), dp(16), dp(16), dp(8));
@@ -151,7 +168,7 @@ public final class MainActivity extends Activity {
         horizontalButton(filters, typeButton, 1.7f); horizontalButton(filters, dateButton, 1); horizontalButton(filters, reset, .8f);
         typeButton.setOnClickListener(v -> chooseType()); dateButton.setOnClickListener(v -> chooseDate());
         reset.setOnClickListener(v -> {
-            filter.eventId = null; filter.eventIds = null; activeGroup = null; filter.fromMillis = null; filter.untilMillis = null; dateLabel = "日期";
+            privacyOnly = false; filter.eventId = null; filter.eventIds = null; activeGroup = null; filter.fromMillis = null; filter.untilMillis = null; dateLabel = "日期";
             typeButton.setText("全部类型"); dateButton.setText(dateLabel); rebuildChips(); search.setText(""); reload(0);
         }); root.addView(filters);
         progress = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
@@ -198,16 +215,48 @@ public final class MainActivity extends Activity {
                 if (previous != null && !previous.equals(file)) SnapshotImporter.remove(previous);
                 ui(() -> {
                     stats = loaded; millis = opened.milliseconds;
-                    filter.eventId = null; filter.eventIds = null; activeGroup = null; typeButton.setText("全部类型");
+                    filter.eventId = null; filter.eventIds = null; activeGroup = null; privacyOnly = false; typeButton.setText("全部类型");
                     buildGroups();
                     overview.setText(String.format(Locale.CHINA, "%,d 条系统记录  ·  %d 类事件", stats.total, groups.size()));
                     source.setText(description + "\n" + EventCatalog.time(stats.first, opened.milliseconds) + " — " + EventCatalog.time(stats.last, opened.milliseconds));
-                    StringBuilder top = new StringBuilder();
-                    for (int i = 0; i < groups.size() && i < 3; i++) {
-                        if (i > 0) top.append("  ·  ");
-                        top.append(groups.get(i).title).append(' ').append(String.format(Locale.CHINA, "%,d", groups.get(i).count));
+
+                    long privacyTotal = 0;
+                    long locCount = 0, callCount = 0, mediaCount = 0, unlockCount = 0;
+                    for (MisightDatabase.TypeCount t : stats.types) {
+                        if (isPrivacy(t.eventId)) privacyTotal += t.count;
+                        if (t.eventId == 915100017L) locCount += t.count;
+                        else if (t.eventId >= 915200000L && t.eventId <= 915299999L) callCount += t.count;
+                        else if (t.eventId == 923525000L) mediaCount += t.count;
+                        else if (t.eventId == 923044101L) unlockCount += t.count;
                     }
-                    highlights.setText(top.length() == 0 ? "" : "最常见：" + top); highlights.setVisibility(top.length() == 0 ? View.GONE : View.VISIBLE);
+                    privacyTotalCount = privacyTotal;
+
+                    if (privacyTotal > 0) {
+                        StringBuilder sb = new StringBuilder();
+                        sb.append(String.format(Locale.CHINA, "⚠️ 检出敏感隐私 %,d 条：", privacyTotal));
+                        List<String> parts = new ArrayList<>();
+                        if (locCount > 0) parts.add("📍 省市位置 " + String.format(Locale.CHINA, "%,d", locCount));
+                        if (callCount > 0) parts.add("📞 通话 " + String.format(Locale.CHINA, "%,d", callCount));
+                        if (mediaCount > 0) parts.add("🖼️ 相册 " + String.format(Locale.CHINA, "%,d", mediaCount));
+                        if (unlockCount > 0) parts.add("🔓 解锁 " + String.format(Locale.CHINA, "%,d", unlockCount));
+                        for (int i = 0; i < parts.size(); i++) {
+                            if (i > 0) sb.append("  ·  ");
+                            sb.append(parts.get(i));
+                        }
+                        highlights.setText(sb.toString());
+                        highlights.setTextColor(alertColor);
+                        highlights.setVisibility(View.VISIBLE);
+                    } else {
+                        StringBuilder top = new StringBuilder();
+                        for (int i = 0; i < groups.size() && i < 3; i++) {
+                            if (i > 0) top.append("  ·  ");
+                            top.append(groups.get(i).title).append(' ').append(String.format(Locale.CHINA, "%,d", groups.get(i).count));
+                        }
+                        highlights.setText(top.length() == 0 ? "" : "最常见：" + top);
+                        highlights.setTextColor(accent);
+                        highlights.setVisibility(top.length() == 0 ? View.GONE : View.VISIBLE);
+                    }
+
                     rebuildChips();
                     busy(false, ""); reload(0);
                 });
@@ -230,10 +279,13 @@ public final class MainActivity extends Activity {
         chipRow.removeAllViews();
         if (groups.isEmpty()) { chipScroll.setVisibility(View.GONE); return; }
         chipScroll.setVisibility(View.VISIBLE);
-        addChip("全部", activeGroup == null, v -> selectGroup(null));
+        addChip("全部", activeGroup == null && !privacyOnly, v -> { privacyOnly = false; selectGroup(null); });
+        if (privacyTotalCount > 0) {
+            addChip("⚠️ 敏感隐私 (" + String.format(Locale.CHINA, "%,d", privacyTotalCount) + ")", privacyOnly, v -> selectPrivacyOnly());
+        }
         List<Group> shown = new ArrayList<>(groups.subList(0, Math.min(CHIP_COUNT, groups.size())));
         if (activeGroup != null && !shown.contains(activeGroup)) shown.add(0, activeGroup);
-        for (Group g : shown) addChip(g.title, g == activeGroup, v -> selectGroup(g));
+        for (Group g : shown) addChip(g.title, g == activeGroup && !privacyOnly, v -> { privacyOnly = false; selectGroup(g); });
         if (groups.size() > CHIP_COUNT) addChip("更多…", false, v -> chooseType());
     }
     private void addChip(String label, boolean selected, View.OnClickListener click) {
@@ -243,8 +295,16 @@ public final class MainActivity extends Activity {
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(-2, -2); lp.setMargins(0, 0, dp(6), 0);
         chipRow.addView(chip, lp);
     }
+    private void selectPrivacyOnly() {
+        if (busy) return;
+        privacyOnly = true; activeGroup = null; filter.eventId = null;
+        filter.eventIds = new ArrayList<>(PRIVACY_IDS);
+        typeButton.setText("⚠️ 敏感隐私");
+        rebuildChips(); reload(0);
+    }
     private void selectGroup(Group group) {
         if (busy) return;
+        privacyOnly = false;
         activeGroup = group; filter.eventId = null; filter.eventIds = group == null ? null : new ArrayList<>(group.ids);
         typeButton.setText(group == null ? "全部类型" : group.title);
         rebuildChips(); reload(0);
@@ -284,15 +344,21 @@ public final class MainActivity extends Activity {
     }
     private void chooseType() {
         if (stats == null || busy) return;
-        String[] options = new String[groups.size()+1]; options[0] = "全部事件类型";
+        String[] options = new String[groups.size()+2];
+        options[0] = "全部事件类型";
+        options[1] = "⚠️ 敏感隐私记录 (" + String.format(Locale.CHINA, "%,d", privacyTotalCount) + ")";
         int selected = 0;
+        if (privacyOnly) selected = 1;
         for (int i=0;i<groups.size();i++) {
             Group g = groups.get(i);
-            options[i+1] = g.title + "  (" + String.format(Locale.CHINA, "%,d", g.count) + ")";
-            if (g == activeGroup) selected = i+1;
+            options[i+2] = g.title + "  (" + String.format(Locale.CHINA, "%,d", g.count) + ")";
+            if (g == activeGroup && !privacyOnly) selected = i+2;
         }
         new AlertDialog.Builder(this).setTitle("事件类型").setSingleChoiceItems(options, selected, (dialog, which) -> {
-            dialog.dismiss(); selectGroup(which == 0 ? null : groups.get(which-1));
+            dialog.dismiss();
+            if (which == 0) selectGroup(null);
+            else if (which == 1) selectPrivacyOnly();
+            else selectGroup(groups.get(which-2));
         }).setNegativeButton("取消", null).show();
     }
     private static SimpleDateFormat dateFormat() {
@@ -338,7 +404,8 @@ public final class MainActivity extends Activity {
         TextView note = text("中文名称与换算是阅读辅助，以原始字段为准；本地记录不代表已上传。"
                 + (mask ? "\n敏感字段已打码，可在“更多”中关闭。" : ""), 11, muted);
         note.setPadding(0, dp(10), 0, dp(6)); box.addView(note);
-        TextView raw = text(EventPresenter.rawText(event.raw, mask), 12, ink); raw.setTypeface(Typeface.MONOSPACE);
+
+        TextView raw = text(EventCatalog.pretty(event.raw), 12, ink); raw.setTypeface(Typeface.MONOSPACE);
         raw.setTextIsSelectable(true); raw.setVisibility(View.GONE); raw.setPadding(0, dp(6), 0, 0);
         Button toggle = button("查看原始字段"); toggle.setOnClickListener(v -> {
             boolean show = raw.getVisibility() != View.VISIBLE;
@@ -348,10 +415,10 @@ public final class MainActivity extends Activity {
         box.addView(text("事件 ID " + event.eventId + "  ·  记录 #" + event.id, 11, muted));
         ScrollView scroll = new ScrollView(this); scroll.addView(box);
         new AlertDialog.Builder(this).setTitle("记录详情").setView(scroll).setPositiveButton("关闭", null)
-                .setNeutralButton(mask ? "复制（已打码）" : "复制原始字段", (d, w) -> {
+                .setNeutralButton("复制原始字段", (d, w) -> {
                     ClipboardManager clipboard = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
-                    clipboard.setPrimaryClip(ClipData.newPlainText("MiSight 原始字段", EventPresenter.rawText(event.raw, mask)));
-                    Toast.makeText(this, "已复制", Toast.LENGTH_SHORT).show();
+                    clipboard.setPrimaryClip(ClipData.newPlainText("MiSight 原始字段", EventCatalog.pretty(event.raw)));
+                    Toast.makeText(this, "已复制完整原始字段", Toast.LENGTH_SHORT).show();
                 }).show();
     }
     private TextView sectionTitle(String label) {
@@ -381,8 +448,8 @@ public final class MainActivity extends Activity {
                         .putExtra(Intent.EXTRA_TITLE, "misight-records.json"), EXPORT);
             } else if (which == 1) loadSnapshot(() -> DemoDatabase.create(this), "人工演示数据 · 非真实记录");
             else if (which == 3) clearSnapshot();
-            else new AlertDialog.Builder(this).setTitle("MiSight 查看器 0.2.0").setMessage(
-                    "支持 MiSight event_info 数据库，中文标签是辅助解释。\n\n列表按日期分组，把应用包名换成应用名，把常见字段译成中文、把耗时和时间换算成易读格式；原始字段始终可在详情里查看。应用名取自内置名称和本机可启动的应用，不认识的（如其他手机导出的快照里的应用、后台组件）会显示包名。\n\n敏感字段（号码、路径、设备地址等）默认打码，可在“更多”中关闭。\n\n导入已导出的 SQLite 快照无需 root。活跃数据库应导出一致性副本，单独复制主文件可能漏掉 WAL 中的记录。\n\n读取本机需要授权本应用 root：主库 /data/miuilog/misight/event.db；备份库 /mnt/rescue/misight/event.db。\n\n应用只读取快照，不修改系统数据库。没有互联网权限，不内置统计 SDK。导出的是全部匹配行，param_list 保留原始 JSON 字符串，并附带事件名称。\n\n本地记录不能单独证明存在上传。时间统一显示为北京时间。"
+            else new AlertDialog.Builder(this).setTitle("MiSight 查看器 0.2.1").setMessage(
+                    "支持 MiSight event_info 数据库，中文标签是辅助解释。\n\n列表按日期分组，把应用包名换成应用名，突出展示驻留省市（带地级市）、通话时长与基站、相册图片路径、解锁等敏感记录；原始字段始终可在详情里查看与复制，复制不打码。\n\n敏感字段打码默认关闭以完整展示敏感信息，可在“更多”中开启。\n\n导入已导出的 SQLite 快照无需 root。活跃数据库应导出一致性副本，单独复制主文件可能漏掉 WAL 中的记录。\n\n读取本机需要授权本应用 root：主库 /data/miuilog/misight/event.db；备份库 /mnt/rescue/misight/event.db。\n\n应用只读取快照，不修改系统数据库。没有互联网权限，不内置统计 SDK。导出的是全部匹配行，param_list 保留原始 JSON 字符串，并附带事件名称。\n\n本地记录不能单独证明存在上传。时间统一显示为北京时间。"
             ).setPositiveButton("知道了", null).show();
         }).show();
     }
@@ -395,7 +462,7 @@ public final class MainActivity extends Activity {
                         File file = database.file; database.close(); database = null; SnapshotImporter.remove(file);
                         getPreferences(MODE_PRIVATE).edit().remove("snapshot").apply();
                         ui(() -> {
-                            stats = null; rows.clear(); items.clear(); groups.clear(); activeGroup = null; filter.eventIds = null;
+                            stats = null; rows.clear(); items.clear(); groups.clear(); activeGroup = null; privacyOnly = false; filter.eventIds = null;
                             adapter.notifyDataSetChanged(); rebuildChips(); highlights.setVisibility(View.GONE);
                             overview.setText("尚未打开数据库"); source.setText("导入或读取本机快照开始查看"); busy(false, "快照已删除");
                             prev.setEnabled(false); next.setEnabled(false); pageText.setText("—");
@@ -474,7 +541,14 @@ public final class MainActivity extends Activity {
             }
             MisightDatabase.Event e = (MisightDatabase.Event) item;
             EventPresenter.Card card = presenter.present(e, mask);
-            views.category.setText(card.category);
+            boolean sensitive = isPrivacy(e.eventId);
+            if (sensitive) {
+                views.category.setText("⚠️ " + card.category);
+                views.category.setTextColor(alertColor);
+            } else {
+                views.category.setText(card.category);
+                views.category.setTextColor(accent);
+            }
             views.time.setText(EventCatalog.clock(e.time, millis) + (e.occurrences > 1 ? "  ·  ×" + e.occurrences : ""));
             views.headline.setText(card.headline);
             String facts = presenter.facts(card, 3);

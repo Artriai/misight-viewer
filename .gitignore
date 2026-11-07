@@ -2,6 +2,7 @@
 **/build/
 local.properties
 *.jks
+!app/release.jks
 *.keystore
 *.db
 *.db-*
