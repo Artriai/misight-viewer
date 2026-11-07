@@ -1,0 +1,682 @@
+{
+  "902006601": {
+    "title": "应用渲染卡顿",
+    "description": "性能诊断可能带应用名、页面名和前台时间字段；前台时间单位需结合具体系统版本确认。\n可能字段：ActivityName, AmbientLightness, AmbientTemp, AppUsageTimeOnTop, AppVersion, Arg1, BackShellTemp, BootReason, CaseName, ComponentDiagInfo, CpuLoad, EventTag, FPSMode, FPSTriggerReason, FreeDisk, FreeMem, FreqLimitFlags, HappenTime, IoWait, LastTraceTime, LayerCnt, LayerTransparency, ModemLogOn, NetType…"
+  },
+  "907400029": {
+    "title": "窗口切换时序",
+    "description": "change可能是不透明编码字符串；本查看器不尝试解密，不把它解释为明文轨迹。\n可能字段：change, collect, commit, finished, ready, request, sent, started, type"
+  },
+  "902006600": {
+    "title": "应用渲染卡顿",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：ActivityName, AmbientLightness, AmbientTemp, AppUsageTimeOnTop, AppVersion, Arg1, BackShellTemp, BootReason, CaseName, ComponentDiagInfo, CpuLoad, EventTag, FPSMode, FPSTriggerReason, FreeDisk, FreeMem, FreqLimitFlags, HappenTime, IoWait, LastTraceTime, LayerCnt, LayerTransparency, ModemLogOn, NetType…"
+  },
+  "923048100": {
+    "title": "锁屏状态切换",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：currentTime, errorType, fromState, ownerName, stateVer, toState, transCount, transDur"
+  },
+  "907404001": {
+    "title": "进程重启",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：caller, intervalCategory, lastDeathAdj, lastDeathMemory, lastDeathReason, packageName, processName, reason, restartInterval, startCount1min, startCount24h, startCount30s, startCount5min, startCount5s, timestamp"
+  },
+  "902006100": {
+    "title": "操作响应",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：ActivityName, AmbientLightness, AmbientTemp, AppUsageTimeOnTop, AppVersion, Arg1, BackShellTemp, BootReason, CaseName, ComponentDiagInfo, CpuLoad, EventTag, FPSMode, FPSTriggerReason, FreeDisk, FreeMem, FreqLimitFlags, HappenTime, IoWait, LastTraceTime, LayerCnt, LayerTransparency, ModemLogOn, NetType…"
+  },
+  "923048200": {
+    "title": "锁屏动画",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：actDur, animName, animType, currentTime, exceedRatio, expDur, threshold, viewName"
+  },
+  "923040201": {
+    "title": "界面与系统功能",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：alpha, currentTime, height, scaleX, scaleY, viewName, visibility, width"
+  },
+  "923048000": {
+    "title": "界面与系统功能",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：actDur, currentTime, eventVer, expDur, freq, funcName"
+  },
+  "907404002": {
+    "title": "应用间唤醒",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：action, allow, calleePkgName, calleeUserId, callerPkgName, callerUserId, className, rejectbywakepath, wakeType"
+  },
+  "907400027": {
+    "title": "应用前后台切换",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：change, syncId, type"
+  },
+  "902006603": {
+    "title": "应用帧率偏低",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：ActivityName, AmbientLightness, AmbientTemp, AppUsageTimeOnTop, AppVersion, Arg1, BackShellTemp, BootReason, CaseName, ComponentDiagInfo, CpuLoad, EventTag, FPSMode, FPSTriggerReason, FreeDisk, FreeMem, FreqLimitFlags, HappenTime, IoWait, LastTraceTime, LayerCnt, LayerTransparency, ModemLogOn, NetType…"
+  },
+  "923044702": {
+    "title": "界面与系统功能",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：conflictAnim, conflictFrom, conflictTo, currentTime, newAnim, newFrom, newTo"
+  },
+  "923044101": {
+    "title": "解锁耗时",
+    "description": "包含解锁方式和耗时，不能由此认定保存了密码明文或指纹图像。\n可能字段：actAction, authSuccDur, currentTime, durMs, endStageDur, errorType, kgAwayDur, reqAuthDur, thresMs, unlockCase, unlockTarget, unlockType, unlockVer"
+  },
+  "915100005": {
+    "title": "蜂窝网络",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：SNRValue"
+  },
+  "923044701": {
+    "title": "界面与系统功能",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：animTypeSet, currentTime, existAnims, newAnim, viewName"
+  },
+  "923525000": {
+    "title": "媒体文件操作",
+    "description": "保存操作类型、来源包名和文件路径；路径不等于图片或视频内容。操作编号的含义需要对应系统代码确认。\n可能字段：isFromExternal, operationType, packageName, path[]"
+  },
+  "904003001": {
+    "title": "安全状态诊断",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：EventValue, count"
+  },
+  "923040100": {
+    "title": "界面与系统功能",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：alpha, currentTime, height, scaleX, scaleY, viewName, visibility, width"
+  },
+  "913002001": {
+    "title": "传感器诊断",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：AngleDrop, Distance, EventTime, FoldStatus, Material"
+  },
+  "914003004": {
+    "title": "厂商诊断事件",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：EventParameters[], vendorCode, vendorError"
+  },
+  "903000002": {
+    "title": "耗电与运行时间",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：alarm.alarmCount, appFaultType[], appPower, appVersion, checkScene, commonInfo.avgCurrent, commonInfo.chargeFull, commonInfo.discharged, commonInfo.duration, commonInfo.endLevel, commonInfo.endTime, commonInfo.multiple, commonInfo.onBatteryTime, commonInfo.screenOffTime, commonInfo.screenOnTime, commonInfo.startLevel, commonInfo.temperature, commonInfo.version, desc, logRequired, packageName, runningInfo.bgTime, runningInfo.cacheTime, runningInfo.fgActivityTime…"
+  },
+  "915100002": {
+    "title": "蜂窝网络",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：fromRAT, toRAT"
+  },
+  "904003002": {
+    "title": "安全状态诊断",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：EventValue, count"
+  },
+  "915100017": {
+    "title": "省市与网络场景",
+    "description": "省市字符串的来源和准确性需核验，不能仅凭此事件确认真实行程。\n可能字段：UploadLog, c, duration, fivegEnable, fivegOptimizeScene, foregroundActivity, imsReg, netRejectCause, p, prefNetMode, saEnable, volteEnable, ueSpecialScene"
+  },
+  "902006000": {
+    "title": "应用启动与性能",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：ActivityName, AmbientLightness, AmbientTemp, AppUsageTimeOnTop, AppVersion, Arg1, BackShellTemp, BootReason, CaseName, ComponentDiagInfo, CpuLoad, EventTag, FPSMode, FPSTriggerReason, FreeDisk, FreeMem, FreqLimitFlags, HappenTime, IoWait, LastTraceTime, LayerCnt, LayerTransparency, ModemLogOn, NetType…"
+  },
+  "915100004": {
+    "title": "蜂窝网络",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：rsrpValue"
+  },
+  "915100011": {
+    "title": "蜂窝网络",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：Network, RAT, duration"
+  },
+  "901002015": {
+    "title": "故障与崩溃",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：Detail, PackageName, Pid, Uid"
+  },
+  "907404004": {
+    "title": "进程启动统计",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：startTime, top1Caller, top1Component, top1Count, top1Process, top2Caller, top2Component, top2Count, top2Process, top3Caller, top3Component, top3Count, top3Process, top4Caller, top4Component, top4Count, top4Process, top5Caller, top5Component, top5Count, top5Process"
+  },
+  "907102001": {
+    "title": "窗口与进程",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：eventName, layerName, reason"
+  },
+  "903000001": {
+    "title": "耗电与运行时间",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：appFaultType[], appPower, appVersion, checkScene, commonInfo.avgCurrent, commonInfo.chargeFull, commonInfo.discharged, commonInfo.duration, commonInfo.endLevel, commonInfo.endTime, commonInfo.multiple, commonInfo.onBatteryTime, commonInfo.screenOffTime, commonInfo.screenOnTime, commonInfo.startLevel, commonInfo.temperature, commonInfo.version, cpu.bgRatio, cpu.bigCoreRatio, cpu.cacheRatio, cpu.energyDetail, cpu.fgRatio, cpu.fgsRatio, cpu.power…"
+  },
+  "907503001": {
+    "title": "窗口与进程",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：reason"
+  },
+  "907008203": {
+    "title": "窗口与进程",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：action, blockCount, blockReason, curReceiver, dispatchWaitingTime, enqueueTime, maxProcessingTime, queueRunnableAt, totalCpuUsage, slowReceiver"
+  },
+  "907400028": {
+    "title": "窗口切换",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：change, handlerType, syncId, type"
+  },
+  "906009003": {
+    "title": "音视频诊断",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：threadName, tid, writeDuration"
+  },
+  "907001002": {
+    "title": "窗口与进程",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：pkgName"
+  },
+  "902052160": {
+    "title": "应用性能",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：boosterPolicy, cpuOnlineInfo, curScalingMax, curScalingMin, currentCPUFreq, currentFPS, currentGPUFreq, displayRefreshRate, glkMax, governorInfo, packageName, perfMode, targetFPS, virtualSensorTemp"
+  },
+  "907404003": {
+    "title": "组件启动异常",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：action[], activityName[], errorCode, packageName"
+  },
+  "907400022": {
+    "title": "应用切换耗时",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：change, collect, commit, finished, ready, request, sent, started, syncId, type"
+  },
+  "907012002": {
+    "title": "窗口或壁纸位置",
+    "description": "部分样本对应壁纸偏移，不能直接视作触摸轨迹或地理坐标。\n可能字段：displayId, offsetX, offsetY, positionX, positionY, rotation, callStack, window"
+  },
+  "915200012": {
+    "title": "通话时间与质量",
+    "description": "可包含通话时间、时长和网络质量指标；事件行数不等于独立通话次数。\n可能字段：band, call_begin_time, call_duration, call_end_time, dl_bler, dl_loss_packet_level_times[], dl_rtp_500_times, dl_rtp_packet_loss_count, dl_rtp_packet_total_count, dl_rtp_silent_times, dl_under_flow_count, hplmn, rsrp[], snr[], subId, ul_rtp_silent_times, vplmn, dl_loss_packet_rate_statics[], cs_flag, is_roam, rat_type, rtp_3s_loss_gt10pct_times, rtp_3s_no_packet_times, rtp_no_dl_packet…"
+  },
+  "902006602": {
+    "title": "应用性能",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：ActivityName, AmbientLightness, AmbientTemp, AppUsageTimeOnTop, AppVersion, Arg1, BackShellTemp, BootReason, CaseName, ComponentDiagInfo, CpuLoad, EventTag, FPSMode, FPSTriggerReason, FreeDisk, FreeMem, FreqLimitFlags, HappenTime, IoWait, LastTraceTime, LayerCnt, LayerTransparency, ModemLogOn, NetType…"
+  },
+  "904003010": {
+    "title": "安全状态诊断",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：ErrType"
+  },
+  "901004203": {
+    "title": "故障与崩溃",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：CurrentTime, PackageName, Summary"
+  },
+  "907001004": {
+    "title": "窗口与进程",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：pkgName, reason, packageName, sourcePackageName, sourcePid, sourceUid, userId"
+  },
+  "902004001": {
+    "title": "应用性能",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：last_ten_threads_info[], max_schlat_name, max_schlat_pid, max_schlat_time, max_schlat_value, schlat_prop_above_10ms, schlat_prop_above_3ms"
+  },
+  "920030504": {
+    "title": "相机诊断",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：ActualHalFps, ActualRenderFps, AftGPUMem, AftMemAvailable, AftMemCache, AftMemCacheRSS, AftMemFree, AftMemSlabReclaimable, AftMemSlabUnreclaimable, AftReserveFree, AftSrcPoolFree, AppMoudle, BatteryLevel, CPUFreq, CPUPSI, CPUTemp, DurationMs, Event, EventType, ExpectedFps, ExposureTimeNs, Facing, IOPSI, LookbackTime…"
+  },
+  "920030502": {
+    "title": "相机诊断",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：ActualHalFps, ActualRenderFps, AftGPUMem, AftMemAvailable, AftMemCache, AftMemCacheRSS, AftMemFree, AftMemSlabReclaimable, AftMemSlabUnreclaimable, AftReserveFree, AftSrcPoolFree, AppMoudle, BatteryLevel, CPUFreq, CPUPSI, CPUTemp, DurationMs, Event, EventType, ExpectedFps, ExposureTimeNs, Facing, IOPSI, LookbackTime…"
+  },
+  "915200011": {
+    "title": "蜂窝网络",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：CallDirect, CallType, Network, time"
+  },
+  "919011101": {
+    "title": "定位诊断",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：DataSources[]"
+  },
+  "915200006": {
+    "title": "蜂窝网络",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：CRSCall, ColumeOverZero, DND, RingingUriIsNull, RingtonePlayed, RingtoneVolume, VoiceReport"
+  },
+  "907008110": {
+    "title": "窗口与进程",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：count, packageName, uid"
+  },
+  "904001006": {
+    "title": "安全状态诊断",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：EventValue"
+  },
+  "902006101": {
+    "title": "应用性能",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：ActivityName, AmbientLightness, AmbientTemp, AppUsageTimeOnTop, AppVersion, Arg1, BackShellTemp, BootReason, CaseName, ComponentDiagInfo, CpuLoad, EventTag, FPSMode, FPSTriggerReason, FreeDisk, FreeMem, FreqLimitFlags, HappenTime, IoWait, LastTraceTime, LayerCnt, LayerTransparency, ModemLogOn, NetType…"
+  },
+  "907002074": {
+    "title": "窗口与进程",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：displayID, entryCode, focusApplicationName"
+  },
+  "915200015": {
+    "title": "通话基站与无线指标",
+    "description": "包含基站及无线指标；时间字段可能有异常，不能直接当作准确定位轨迹。\n可能字段：call_aver_mtpl, call_aver_pusch_pa, call_band_switch_flag, call_begin_band, call_cell_id, call_dl_bler, call_end_band, call_end_reason, call_end_underflow_loss_rate, call_fbrx_error_flag, call_is_roam, call_nr5g_irat_lte_flag, call_pci, call_rat, call_rtp_sn_not_update_flag, call_ul_bler, lte_call_deactivate_eps_bearer_cause, lte_call_deactivate_eps_bearer_flag, lte_call_rach_contention, lte_call_rach_contention_procedure, lte_call_rach_reason, lte_call_rach_result, nr5g_call_pdu_session_release_cause, nr5g_call_pdu_session_release_flag…"
+  },
+  "916012002": {
+    "title": "Wi-Fi 与网络",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：ErrorDesc"
+  },
+  "920030503": {
+    "title": "相机诊断",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：ActualHalFps, ActualRenderFps, AftGPUMem, AftMemAvailable, AftMemCache, AftMemCacheRSS, AftMemFree, AftMemSlabReclaimable, AftMemSlabUnreclaimable, AftReserveFree, AftSrcPoolFree, AppMoudle, BatteryLevel, CPUFreq, CPUPSI, CPUTemp, DurationMs, Event, EventType, ExpectedFps, ExposureTimeNs, Facing, IOPSI, LookbackTime…"
+  },
+  "904003004": {
+    "title": "安全状态诊断",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：EventValue, count"
+  },
+  "903001001": {
+    "title": "耗电与运行时间",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：checkScene, commonInfo.avgCurrent, commonInfo.chargeFull, commonInfo.discharged, commonInfo.duration, commonInfo.endLevel, commonInfo.endTime, commonInfo.multiple, commonInfo.onBatteryTime, commonInfo.screenOffTime, commonInfo.screenOnTime, commonInfo.startLevel, commonInfo.temperature, commonInfo.version, desc, logRequired, maxCount, maxName, totalCount"
+  },
+  "902006604": {
+    "title": "应用性能",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：ActivityName, AmbientLightness, AmbientTemp, AppUsageTimeOnTop, AppVersion, Arg1, BackShellTemp, BootReason, CaseName, ComponentDiagInfo, CpuLoad, EventTag, FPSMode, FPSTriggerReason, FreeDisk, FreeMem, FreqLimitFlags, HappenTime, IoWait, LastTraceTime, LayerCnt, LayerTransparency, ModemLogOn, NetType…"
+  },
+  "906009001": {
+    "title": "音视频诊断",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：threadName, tid, writeDuration"
+  },
+  "920030506": {
+    "title": "相机诊断",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：ActualHalFps, ActualRenderFps, AftGPUMem, AftMemAvailable, AftMemCache, AftMemCacheRSS, AftMemFree, AftMemSlabReclaimable, AftMemSlabUnreclaimable, AftReserveFree, AftSrcPoolFree, AppMoudle, BatteryLevel, CPUFreq, CPUPSI, CPUTemp, DurationMs, Event, EventType, ExpectedFps, ExposureTimeNs, Facing, IOPSI, LookbackTime…"
+  },
+  "915100007": {
+    "title": "蜂窝网络",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：DataRegisterRAT, ddsPhoneId, isRegistrationIms, subId, voiceNetworkType"
+  },
+  "916053001": {
+    "title": "Wi-Fi 与网络",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：defParam"
+  },
+  "923585002": {
+    "title": "界面与系统功能",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：authority, errorCode, reason"
+  },
+  "903001501": {
+    "title": "耗电与运行时间",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：checkScene, commonInfo.avgCurrent, commonInfo.chargeFull, commonInfo.discharged, commonInfo.duration, commonInfo.endLevel, commonInfo.endTime, commonInfo.multiple, commonInfo.onBatteryTime, commonInfo.screenOffTime, commonInfo.screenOnTime, commonInfo.startLevel, commonInfo.temperature, commonInfo.version, desc, logRequired, maxCount, maxName, totalCount"
+  },
+  "917020703": {
+    "title": "蓝牙诊断",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：ErrorType, NumOfTrackableAdv, PackageName, ScanType"
+  },
+  "907502001": {
+    "title": "窗口与进程",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：activityName1, activityName2, packageName"
+  },
+  "903115010": {
+    "title": "耗电与运行时间",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：data[].activeTime, data[].frozenTime, data[].packageName, data[].thawCount, data[].thawReasonTop1, data[].thawReasonTop2, data[].thawReasonTop3, data[].thawReasonTop4, data[].thawReasonTop5, staticTime"
+  },
+  "920030501": {
+    "title": "相机诊断",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：ActualHalFps, ActualRenderFps, AftGPUMem, AftMemAvailable, AftMemCache, AftMemCacheRSS, AftMemFree, AftMemSlabReclaimable, AftMemSlabUnreclaimable, AftReserveFree, AftSrcPoolFree, AppMoudle, BatteryLevel, CPUFreq, CPUPSI, CPUTemp, DurationMs, Event, EventType, ExpectedFps, ExposureTimeNs, Facing, IOPSI, LookbackTime…"
+  },
+  "917012101": {
+    "title": "蓝牙诊断",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：ErrorCode, PackageName"
+  },
+  "907002001": {
+    "title": "窗口与进程",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：detail, timeOutAverage, timeOutCount"
+  },
+  "915100003": {
+    "title": "蜂窝网络",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：causeValue, fromRAT, toRAT"
+  },
+  "906007061": {
+    "title": "音视频诊断",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：packageName, sampleRate, useCase"
+  },
+  "920012082": {
+    "title": "相机诊断",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：ActivityName, AppModule, AppName, CameraId, ClientType, FpsRange, OpMode, Pid, Reason, StreamUsecase, TimeStamp, SuppressedCount"
+  },
+  "923024001": {
+    "title": "界面与系统功能",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：sliderBrightness, systemBrightness"
+  },
+  "916051301": {
+    "title": "Wi-Fi 与网络",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：Reason"
+  },
+  "907008109": {
+    "title": "窗口与进程",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：callerPkg, callerUid, reason"
+  },
+  "909014014": {
+    "title": "充电与电池",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：cycleCount, isMaster, rawsoh, uisoh"
+  },
+  "907004001": {
+    "title": "窗口与进程",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：displayId, screenOnTime, suspendBlockerTime, unblockScreenOnTime"
+  },
+  "920005004": {
+    "title": "相机诊断",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：FuseIds[], SensorNames[], TimeStamp"
+  },
+  "923002001": {
+    "title": "界面与系统功能",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：id, packageName"
+  },
+  "909001007": {
+    "title": "充电与电池",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：chgStatInfo, chgType"
+  },
+  "916051601": {
+    "title": "Wi-Fi 与网络",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：Reason"
+  },
+  "915000002": {
+    "title": "蜂窝网络",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：cause"
+  },
+  "815000002": {
+    "title": "网络恢复结果",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：ProblemCode, RecoveryResult"
+  },
+  "907004102": {
+    "title": "窗口与进程",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：brightness, displayId, temp"
+  },
+  "920030251": {
+    "title": "相机诊断",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：AftGPUMem, AftMemAvailable, AftMemCache, AftMemCacheRSS, AftMemFree, AftMemSlabReclaimable, AftMemSlabUnreclaimable, AftReserveFree, AftSrcPoolFree, AppMoudle, BatteryLevel, CPUFreq, CPUPSI, CPUTemp, Event, EventType, Facing, IOPSI, LookbackTime, MemPSI, PreCPUPSI, PreFMemFree, PreGPUMem, PreIOPSI…"
+  },
+  "920030252": {
+    "title": "相机诊断",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：AftGPUMem, AftMemAvailable, AftMemCache, AftMemCacheRSS, AftMemFree, AftMemSlabReclaimable, AftMemSlabUnreclaimable, AftReserveFree, AftSrcPoolFree, AppMoudle, BatteryLevel, CPUFreq, CPUPSI, CPUTemp, Event, EventType, Facing, IOPSI, LookbackTime, MemPSI, PreCPUPSI, PreFMemFree, PreGPUMem, PreIOPSI…"
+  },
+  "915000005": {
+    "title": "蜂窝网络",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：Band, FakeDuration, Network, RAT, RecoveryMethod, RecoveryStage, ScreenStatus, SignalQuality, SignalStrength, rsrp"
+  },
+  "917043001": {
+    "title": "蓝牙诊断",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：btA2dpStartSuspendError, DeviceName"
+  },
+  "915200001": {
+    "title": "蜂窝网络",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：EventReason"
+  },
+  "815200001": {
+    "title": "网络恢复结果",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：ProblemCode, RecoveryResult"
+  },
+  "917020102": {
+    "title": "蓝牙诊断",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：DeviceName"
+  },
+  "904003011": {
+    "title": "安全状态诊断",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：PendingId"
+  },
+  "906009004": {
+    "title": "音视频诊断",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：threadName, tid, writeDuration"
+  },
+  "915100001": {
+    "title": "蜂窝网络",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：reattach"
+  },
+  "815100001": {
+    "title": "网络恢复结果",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：ProblemCode, RecoveryResult"
+  },
+  "917020701": {
+    "title": "蓝牙 GATT 连接",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：DeviceMac, Reason, TimeStamp, DeviceName"
+  },
+  "902051001": {
+    "title": "应用性能",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：boosterPolicy, currentCPUFreq, currentFPS, currentGPUFreq, displayRefreshRate, glkMax, governorInfo, packageName, perfMode, realTargetFPS, targetFPS, virtualSensorTemp"
+  },
+  "911001017": {
+    "title": "图形硬件诊断",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：gpu_page_fault"
+  },
+  "919032001": {
+    "title": "定位诊断",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：PackageName, PermissionError"
+  },
+  "907002075": {
+    "title": "窗口与进程",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：dispatchOnceTime, entryType, eventTime, inputChannelName, publishTime"
+  },
+  "915000006": {
+    "title": "蜂窝网络",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：Apn, ApnType, Band, ErrorCause, Network, NrConfigType, PreferredApn, RAT, SetupDuration, SignalQuality, SignalStrength, UploadLog, hplmn, roaming, vplmn"
+  },
+  "901010998": {
+    "title": "故障与崩溃",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：CurrentTime, Extra, Keyword, Reason"
+  },
+  "907002076": {
+    "title": "窗口与进程",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：reason, windowName"
+  },
+  "901001003": {
+    "title": "故障与崩溃",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：CrashType, CurrentTime, Digest, Keyword, PackageName, Stacktrace, Summary"
+  },
+  "906130001": {
+    "title": "音视频诊断",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：Keyword, PID"
+  },
+  "901003101": {
+    "title": "故障与崩溃",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：Duration, PackageName, WindowName"
+  },
+  "907012003": {
+    "title": "窗口与进程",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：animState, animType, callStack, curScale, displayId, scaleTo"
+  },
+  "920012061": {
+    "title": "相机诊断",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：ActivityName, AppModule, AppName, CameraId, ClientType, FpsRange, FrameNumber, GapMs, OpMode, Pid, StreamUsecase, TimeStamp"
+  },
+  "919011102": {
+    "title": "定位诊断",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：GeocodeError"
+  },
+  "903001000": {
+    "title": "耗电与运行时间",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：checkScene, commonInfo.avgCurrent, commonInfo.chargeFull, commonInfo.discharged, commonInfo.duration, commonInfo.endLevel, commonInfo.endTime, commonInfo.multiple, commonInfo.onBatteryTime, commonInfo.screenOffTime, commonInfo.screenOnTime, commonInfo.startLevel, commonInfo.temperature, commonInfo.version, desc, logRequired, maxName, maxTime, totalTime"
+  },
+  "915100014": {
+    "title": "蜂窝网络",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：Network, Value, hplmn, roaming, vplmn"
+  },
+  "903000003": {
+    "title": "耗电与运行时间",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：count, details, duration, id, logRequired, packageName, restricter, type, usages, version, restrictResult"
+  },
+  "920030507": {
+    "title": "相机诊断",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：ActualHalFps, ActualRenderFps, AftGPUMem, AftMemAvailable, AftMemCache, AftMemCacheRSS, AftMemFree, AftMemSlabReclaimable, AftMemSlabUnreclaimable, AftReserveFree, AftSrcPoolFree, AppMoudle, BatteryLevel, CPUFreq, CPUPSI, CPUTemp, DurationMs, Event, EventType, ExpectedFps, Facing, IOPSI, LookbackTime, MemPSI…"
+  },
+  "909001006": {
+    "title": "充电与电池",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：chgStatInfo, endRm, endSoc, initialRm, initialSoc, maxPower"
+  },
+  "901001001": {
+    "title": "故障与崩溃",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：CrashType, CurrentTime, Digest, Keyword, PackageName, Stacktrace, Summary"
+  },
+  "909010002": {
+    "title": "充电与电池",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：chgErrInfo, chgMode, cycleCnt, vbat"
+  },
+  "916061303": {
+    "title": "Wi-Fi 与网络",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：Reason"
+  },
+  "907001005": {
+    "title": "窗口与进程",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：failureCode, failureReason, packageName, sourcePackageName"
+  },
+  "917020602": {
+    "title": "蓝牙诊断",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：ErrorTag, FileNameEnum, Profile, Type"
+  },
+  "907002052": {
+    "title": "窗口与进程",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：detail, type"
+  },
+  "923020001": {
+    "title": "界面与系统功能",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：type"
+  },
+  "916101001": {
+    "title": "VPN 状态",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：isVpn"
+  },
+  "915100008": {
+    "title": "蜂窝网络",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：Cause, MsgType, ReportType, SubId"
+  },
+  "901003005": {
+    "title": "故障与崩溃",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：PackageName, Times"
+  },
+  "908002004": {
+    "title": "事件配额",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：eventId, maxCnt"
+  },
+  "917020105": {
+    "title": "蓝牙设备连接",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：DeviceMac, Reason, TimeStamp, DeviceName"
+  },
+  "904001005": {
+    "title": "密码验证错误状态",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：EventValue"
+  },
+  "919012101": {
+    "title": "定位诊断",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：Behavior, SvCount, WifiMaxRssi"
+  },
+  "902052011": {
+    "title": "应用性能",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：boosterPolicy, currentCPUFreq, currentFPS, currentGPUFreq, displayRefreshRate, dynamicFps, glkMax, governorInfo, perfMode, realTargetFPS, scalingMinFreq, targetFPS, virtualSensorTemp"
+  },
+  "902005004": {
+    "title": "应用性能",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：ActivityName, LaunchDelay, LaunchFromPackage, LaunchType, PackageName, TransitionDelay"
+  },
+  "907400001": {
+    "title": "窗口与进程",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：reason, syncId, type"
+  },
+  "907400004": {
+    "title": "窗口与进程",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：reason, syncId, trigger, type"
+  },
+  "916051001": {
+    "title": "Wi-Fi 与网络",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：DisconnReason, ErrorDesc"
+  },
+  "901007002": {
+    "title": "故障与崩溃",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：Digest, Stacktrace, Summary, Type"
+  },
+  "915200013": {
+    "title": "通话断开信息",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：Band, CallDirect, CallType, DeviceName, DiconnectCause, DiconnectMessage, Network, RAT, SignalQuality, SignalStrength, UploadLog, dsda, dsdaUsageScene, isDds, networkType, numberType, rsrp"
+  },
+  "907002072": {
+    "title": "窗口与进程",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：reason, entryType"
+  },
+  "914003005": {
+    "title": "厂商诊断事件",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：EventParameters[], vendorCode, vendorError"
+  },
+  "909003001": {
+    "title": "充电与电池",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：chgStatInfo, cycleCnt"
+  },
+  "920012019": {
+    "title": "相机诊断",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：ActivityName, AppModule, AppName, CameraId, ClientType, FpsRange, OpMode, Pid, StreamUsecase, TimeStamp"
+  },
+  "923060004": {
+    "title": "界面与系统功能",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：reason, which"
+  },
+  "915300008": {
+    "title": "蜂窝网络",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：cell_change_number, fiveg_advance_time_rate, idle_mode_time, oos_timerate, rat_change_number, rx_mode_time, sleep_current, sleep_mode_time, slot_id, tx0_mode_time, tx1_mode_time, tx2_mode_time, tx3_mode_time, tx4_mode_time"
+  },
+  "909002013": {
+    "title": "充电与电池",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：chgErrInfo"
+  },
+  "906001153": {
+    "title": "音视频诊断",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：deviceName, pcmId"
+  },
+  "923121001": {
+    "title": "界面与系统功能",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：currentTime, lastTime"
+  },
+  "901010999": {
+    "title": "故障与崩溃",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：CurrentTime, Extra, Keyword, Reason"
+  },
+  "906100003": {
+    "title": "音视频诊断",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：Keyword"
+  },
+  "917042101": {
+    "title": "蓝牙诊断",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：btScoEstablishError, btScoEstablishErrorReason"
+  },
+  "909003014": {
+    "title": "充电与电池",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：adjustVoltage, batteryTemp, chgStatInfo, thermalLevel"
+  },
+  "903001500": {
+    "title": "耗电与运行时间",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：checkScene, commonInfo.avgCurrent, commonInfo.chargeFull, commonInfo.discharged, commonInfo.duration, commonInfo.endLevel, commonInfo.endTime, commonInfo.multiple, commonInfo.onBatteryTime, commonInfo.screenOffTime, commonInfo.screenOnTime, commonInfo.startLevel, commonInfo.temperature, commonInfo.version, desc, logRequired, maxName, maxTime, totalTime"
+  },
+  "923585003": {
+    "title": "界面与系统功能",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：authority, errorCode, reason"
+  },
+  "907001001": {
+    "title": "窗口与进程",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：packageName, sourcePackageName, sourcePid, sourceUid"
+  },
+  "920016154": {
+    "title": "相机诊断",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：RemovePersonErrMsg, TimeStamp"
+  },
+  "907001006": {
+    "title": "窗口与进程",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：collectingCerts, dexopt, extractNativeLib, fileCopying, googleVerification, miuiVerification, packageName, temperature, total"
+  },
+  "915200010": {
+    "title": "通话连接信息",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：Band, CallDirect, CallType, ConnDuration, DeviceName, DiconnectCause, DiconnectMessage, Network, RAT, SignalQuality, SignalStrength, UploadLog, dsda, dsdaUsageScene, isDds, networkType, numberType, rsrp"
+  },
+  "920040001": {
+    "title": "相机诊断",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：AvailableMemory, CacheMemory, FreeMemory, KillNum, KillProcessInfo, MemoryPSI, Scence, TotalMemory"
+  },
+  "915000004": {
+    "title": "蜂窝网络",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：Apn, Band, DnsServers, Interface, Mtu, Network, NrConfigType, RAT, ScreenStatus, SignalQuality, SignalStrength, Trigger, UploadLog, dataRegState, foregroundPkg, isInCall, isWechatVoip, rsrp, userDataEnable, voiceRegState, wifiActive"
+  },
+  "919022002": {
+    "title": "定位诊断",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：AidDataError"
+  },
+  "923001005": {
+    "title": "界面与系统功能",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：boundsBottom, rowBottom, rowHeight, rowScale"
+  },
+  "901002017": {
+    "title": "故障与崩溃",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：Detail, PackageName, Pid, Uid"
+  },
+  "917020301": {
+    "title": "蓝牙诊断",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：DeviceName"
+  },
+  "923575014": {
+    "title": "界面与系统功能",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：SubCode"
+  },
+  "923580000": {
+    "title": "界面与系统功能",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：CrashType, PackageName, VersionName, attached"
+  },
+  "901003001": {
+    "title": "故障与崩溃",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：AnrType, CurrentTime, Digest, IsForeground, Keyword, PackageName, Stacktrace, Summary"
+  },
+  "901002014": {
+    "title": "故障与崩溃",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：Detail, PackageName, Pid, Uid"
+  },
+  "901006001": {
+    "title": "故障与崩溃",
+    "description": "这是根据字段和编号整理的辅助标签，不代表官方用途说明，也不证明数据已上传。\n可能字段：CurrentTime, Stacktrace, Summary, Type"
+  }
+}
