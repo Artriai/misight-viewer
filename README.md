@@ -49,7 +49,7 @@ adb shell am instrument -w io.github.artriai.misightviewer.test/androidx.test.ru
 - 顶部可一键切换常见事件类型；相同名称的事件 ID 合并为一类，不再向用户展示数字 ID。
 - 搜索同时匹配应用名、事件名称和字段内容。
 - 详情页分为“详细信息”和可折叠的“原始字段”；号码、路径、设备地址等敏感字段默认打码（“更多”里可关）。
-- 需要 `QUERY_ALL_PACKAGES` 以显示已安装应用的名称，仅在本机使用；应用仍无 INTERNET 权限。
+- 通过 `<queries>` 读取可启动应用的名称（不申请 `QUERY_ALL_PACKAGES`），仅在本机使用；后台组件靠内置名称，认不出的显示包名；应用仍无 INTERNET 权限。
 - JSON 导出附带 `event_title`，`param_list` 仍为原始字符串。
 
 ## 版本

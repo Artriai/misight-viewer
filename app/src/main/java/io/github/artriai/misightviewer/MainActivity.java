@@ -382,7 +382,7 @@ public final class MainActivity extends Activity {
             } else if (which == 1) loadSnapshot(() -> DemoDatabase.create(this), "人工演示数据 · 非真实记录");
             else if (which == 3) clearSnapshot();
             else new AlertDialog.Builder(this).setTitle("MiSight 查看器 0.2.0").setMessage(
-                    "支持 MiSight event_info 数据库，中文标签是辅助解释。\n\n列表按日期分组，把应用包名换成应用名，把常见字段译成中文、把耗时和时间换算成易读格式；原始字段始终可在详情里查看。应用名取自内置名称和本机已安装的应用，其他手机导出的快照里不认识的应用会显示包名。\n\n敏感字段（号码、路径、设备地址等）默认打码，可在“更多”中关闭。\n\n导入已导出的 SQLite 快照无需 root。活跃数据库应导出一致性副本，单独复制主文件可能漏掉 WAL 中的记录。\n\n读取本机需要授权本应用 root：主库 /data/miuilog/misight/event.db；备份库 /mnt/rescue/misight/event.db。\n\n应用只读取快照，不修改系统数据库。没有互联网权限，不内置统计 SDK。导出的是全部匹配行，param_list 保留原始 JSON 字符串，并附带事件名称。\n\n本地记录不能单独证明存在上传。时间统一显示为北京时间。"
+                    "支持 MiSight event_info 数据库，中文标签是辅助解释。\n\n列表按日期分组，把应用包名换成应用名，把常见字段译成中文、把耗时和时间换算成易读格式；原始字段始终可在详情里查看。应用名取自内置名称和本机可启动的应用，不认识的（如其他手机导出的快照里的应用、后台组件）会显示包名。\n\n敏感字段（号码、路径、设备地址等）默认打码，可在“更多”中关闭。\n\n导入已导出的 SQLite 快照无需 root。活跃数据库应导出一致性副本，单独复制主文件可能漏掉 WAL 中的记录。\n\n读取本机需要授权本应用 root：主库 /data/miuilog/misight/event.db；备份库 /mnt/rescue/misight/event.db。\n\n应用只读取快照，不修改系统数据库。没有互联网权限，不内置统计 SDK。导出的是全部匹配行，param_list 保留原始 JSON 字符串，并附带事件名称。\n\n本地记录不能单独证明存在上传。时间统一显示为北京时间。"
             ).setPositiveButton("知道了", null).show();
         }).show();
     }
